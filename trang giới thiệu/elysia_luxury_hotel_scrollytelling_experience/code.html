@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ELYSIA - Đỉnh Cao Sang Trọng</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-container": "#1c1b1b",
+                        "tertiary-fixed-dim": "#c8c6c2",
+                        "on-primary-fixed-variant": "#474746",
+                        "primary-fixed": "#e5e2e1",
+                        "on-secondary-container": "#745c00",
+                        "on-secondary-fixed-variant": "#574500",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#1c1b1b",
+                        "outline-variant": "#c4c7c7",
+                        "on-surface": "#1b1c1c",
+                        "surface-tint": "#5f5e5e",
+                        "surface-dim": "#dbdad9",
+                        "secondary": "#735c00",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#241a00",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#fbf9f8",
+                        "on-primary-container": "#858383",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-surface-variant": "#444748",
+                        "surface-variant": "#e4e2e2",
+                        "inverse-on-surface": "#f2f0f0",
+                        "tertiary": "#000000",
+                        "surface-container": "#efeded",
+                        "on-tertiary-container": "#858480",
+                        "inverse-surface": "#303031",
+                        "secondary-fixed": "#ffe088",
+                        "surface": "#fbf9f8",
+                        "on-tertiary-fixed": "#1c1c1a",
+                        "surface-container-highest": "#e4e2e2",
+                        "secondary-container": "#fed65b",
+                        "surface-container-low": "#f5f3f3",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1b1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#fbf9f8",
+                        "tertiary-fixed": "#e5e2de",
+                        "inverse-primary": "#c8c6c5",
+                        "surface-container-high": "#e9e8e7",
+                        "tertiary-container": "#1c1c1a",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "outline": "#747878",
+                        "on-tertiary-fixed-variant": "#474744",
+                        // Custom palette overrides to match prompt requested colors while keeping the theme shape
+                        "gold": "#D4AF37",
+                        "charcoal": "#1A1A1A",
+                        "cream": "#F9F6F2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "container-max": "1440px",
+                        base: "8px",
+                        "section-gap-desktop": "120px",
+                        "margin-mobile": "20px",
+                        gutter: "24px",
+                        "section-gap-mobile": "64px"
+                    },
+                    fontFamily: {
+                        "body-md": ["Inter", "sans-serif"],
+                        "headline-md": ["Playfair Display", "serif"],
+                        "headline-xl-mobile": ["Playfair Display", "serif"],
+                        "headline-lg": ["Playfair Display", "serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"],
+                        "headline-xl": ["Playfair Display", "serif"]
+                    },
+                    fontSize: {
+                        "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "headline-md": ["32px", { lineHeight: "1.3", fontWeight: "400" }],
+                        "headline-xl-mobile": ["40px", { lineHeight: "1.2", fontWeight: "400" }],
+                        "headline-lg": ["48px", { lineHeight: "1.2", fontWeight: "400" }],
+                        "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "label-sm": ["12px", { lineHeight: "1.0", letterSpacing: "0.1em", fontWeight: "600" }],
+                        "headline-xl": ["64px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Playfair+Display:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .clip-path-reveal {
+            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%);
+            transition: clip-path 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .clip-path-reveal.visible {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        }
+
+        /* 3D Container specific styles for scrollytelling */
+        #threed-container {
+            transition: transform 0.1s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-x-hidden selection:bg-secondary selection:text-white relative">
+<!-- Background Shader -->
+<div class="fixed inset-0 z-[-2] pointer-events-none opacity-20">
+<!-- STITCH_SHADER_START:ANIMATION_2 class="absolute inset-0 w-full h-full" -->
+<div class="absolute inset-0 w-full h-full" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_2" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_2');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+uniform float u_time;
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+varying vec2 v_texCoord;
+
+void main() {
+    vec2 uv = v_texCoord;
+    vec2 mouse = u_mouse / u_resolution;
+    
+    // Smooth flowing background colors based on hotel palette
+    vec3 color1 = vec3(0.1, 0.1, 0.1); // Deep Charcoal
+    vec3 color2 = vec3(0.83, 0.68, 0.21); // Champagne Gold
+    vec3 color3 = vec3(0.97, 0.96, 0.95); // Soft Cream
+    
+    float noise = sin(uv.x * 3.0 + u_time * 0.5) * cos(uv.y * 3.0 + u_time * 0.5);
+    noise += sin(uv.x * 5.0 - u_time * 0.7) * cos(uv.y * 5.0 + u_time * 0.2) * 0.5;
+    
+    vec3 finalColor = mix(color1, color2 * 0.3, noise + 0.5);
+    finalColor = mix(finalColor, color1, length(uv - 0.5) * 1.5);
+    
+    // Add a subtle gold shimmer
+    float shimmer = pow(max(0.0, sin(uv.x * 10.0 + uv.y * 10.0 + u_time)), 20.0);
+    finalColor += color2 * shimmer * 0.2;
+
+    gl_FragColor = vec4(finalColor, 1.0);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_2 -->
+</div>
+<!-- 3D Scene Container (Fixed, reacts to scroll via JS) -->
+<div class="fixed inset-0 z-[-1] pointer-events-none flex items-center justify-center opacity-80 mix-blend-multiply" id="threed-container">
+<!-- STITCH_THREEJS_START:ANIMATION_3 class="absolute inset-0 w-full h-full" -->
+<div class="absolute inset-0 w-full h-full" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_3" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_3');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  const width = container.clientWidth || window.innerWidth;
+const height = container.clientHeight || window.innerHeight;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+renderer.setSize(width, height);
+container.appendChild(renderer.domElement);
+
+// Create abstract luxury architecture (tower/sculpture)
+const group = new THREE.Group();
+
+const material = new THREE.MeshPhongMaterial({ 
+    color: 0xD4AF37, 
+    shininess: 100,
+    transparent: true,
+    opacity: 0.8
+});
+
+// Central core
+const coreGeo = new THREE.CylinderGeometry(0.5, 0.8, 4, 32);
+const core = new THREE.Mesh(coreGeo, material);
+group.add(core);
+
+// Floating rings/balconies
+for(let i=0; i<8; i++) {
+    const ringGeo = new THREE.TorusGeometry(1.2 + i*0.1, 0.05, 16, 100);
+    const ring = new THREE.Mesh(ringGeo, material);
+    ring.position.y = -2 + i * 0.6;
+    ring.rotation.x = Math.PI / 2;
+    group.add(ring);
+}
+
+scene.add(group);
+
+const light = new THREE.PointLight(0xffffff, 1, 100);
+light.position.set(5, 5, 5);
+scene.add(light);
+scene.add(new THREE.AmbientLight(0x404040));
+
+camera.position.z = 8;
+
+function animate() {
+    requestAnimationFrame(animate);
+    group.rotation.y += 0.005;
+    
+    // Parallax effect based on scroll (handled via window scroll listener)
+    const scrollY = window.scrollY;
+    group.position.y = scrollY * 0.002;
+    group.rotation.x = scrollY * 0.001;
+    
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+});
+
+animate();
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_3 -->
+</div>
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-transparent backdrop-blur-sm transition-all duration-500 ease-in-out" id="main-nav">
+<div class="flex justify-between items-center px-margin-mobile md:px-section-gap-mobile py-6 w-full max-w-container-max mx-auto">
+<a class="font-headline-md text-headline-md text-primary dark:text-primary-fixed tracking-tighter" href="#">ELYSIA</a>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-primary hover:text-secondary transition-colors duration-300" href="#heritage">Heritage</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-primary hover:text-secondary transition-colors duration-300" href="#suites">Suites</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-primary hover:text-secondary transition-colors duration-300" href="#experience">Experience</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-primary hover:text-secondary transition-colors duration-300" href="#reservations">Reservations</a>
+</div>
+<a class="hidden md:inline-block bg-primary text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-secondary transition-colors duration-300 rounded-none" href="#reservations">Book Now</a>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined text-3xl">menu</span>
+</button>
+</div>
+</nav>
+<!-- Main Content -->
+<main>
+<!-- 1. Hero Section -->
+<section class="relative min-h-screen flex items-center justify-center px-margin-mobile md:px-section-gap-mobile pt-24 overflow-hidden">
+<div class="text-center z-10 max-w-4xl mx-auto flex flex-col items-center gap-8">
+<p class="font-label-sm text-label-sm uppercase tracking-widest text-secondary fade-in-up" style="transition-delay: 200ms;">Khởi Nguồn Của Sự Tinh Tế</p>
+<h1 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary leading-tight fade-in-up" style="transition-delay: 400ms;">ELYSIA - Đỉnh Cao Sang Trọng</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto fade-in-up" style="transition-delay: 600ms;">Nơi nghệ thuật kiến trúc hòa quyện cùng phong cách sống thượng lưu, tạo nên một không gian nghỉ dưỡng không thể sao chép. Trải nghiệm sự tĩnh lặng tuyệt đối giữa lòng đô thị phồn hoa.</p>
+<div class="fade-in-up" style="transition-delay: 800ms;">
+<a class="inline-flex flex-col items-center gap-2 text-primary hover:text-secondary transition-colors duration-300 mt-12" href="#architecture">
+<span class="font-label-sm text-label-sm uppercase tracking-widest">Khám Phá</span>
+<span class="material-symbols-outlined animate-bounce">arrow_downward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- 2. Architecture Section -->
+<section class="min-h-screen flex items-center py-section-gap-mobile md:py-section-gap-desktop px-margin-mobile md:px-section-gap-mobile relative" id="architecture">
+<div class="max-w-container-max mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-center">
+<div class="order-2 md:order-1 flex flex-col gap-8 z-10">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary fade-in-up">Kiến Trúc Độc Bản</h2>
+<div class="w-12 h-1 bg-secondary fade-in-up"></div>
+<p class="font-body-md text-body-md text-on-surface-variant fade-in-up">Mỗi đường nét tại Elysia là một tác phẩm điêu khắc ánh sáng. Sự tương phản giữa những khối bê tông mạnh mẽ và những lớp kính trong suốt tạo nên một bản giao hưởng thị giác đầy mê hoặc. Chúng tôi tin rằng không gian sống chính là bộ trang phục quyền lực nhất của con người.</p>
+<p class="font-body-md text-body-md text-on-surface-variant fade-in-up">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+<a class="inline-flex items-center gap-4 text-primary hover:text-secondary font-label-sm text-label-sm uppercase tracking-widest transition-colors duration-300 w-max group fade-in-up" href="#">
+                        Chi Tiết Thiết Kế
+                        <span class="material-symbols-outlined transform group-hover:translate-x-2 transition-transform duration-300">arrow_forward</span>
+</a>
+</div>
+<div class="order-1 md:order-2 h-[512px] md:h-[716px] relative z-10">
+<!-- The 3D model (from the background container) will visually occupy this space as the user scrolls, 
+                         but we add a placeholder image here for layout stability and fallback -->
+<div class="w-full h-full bg-surface-container-high rounded-none overflow-hidden clip-path-reveal">
+<img class="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700" data-alt="A meticulously crafted architectural rendering of a modern minimalist luxury hotel interior. The space features soaring high ceilings, polished cream stone floors, and towering raw concrete pillars. Floor-to-ceiling windows bathe the room in soft, diffused natural daylight, casting dramatic geometric shadows. Accent lighting in warm champagne gold highlights subtle textures on the walls. The overall mood is serene, sophisticated, and deeply luxurious." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_9k6QakGJzyaAhsZp-nrWUqqXdkHMcQnjeK3JSRIvuUBobuoshD4qV-zPpeHTnbbPnk0Y4njkTrpQuX1l-FvZE-Tq3uPbR6PTvhqVWAoo_RK52aEQI-shIphh8EAChWUskNQJJFeI1X1KZlbKVpjfDSp2f5Y6loJuZrhDi0tmOJfWRfQxQlzeT5Kx49_7uyg1-BRrXRRp1upbh_lzaPOBNvJKRi4gqnkvQFPWkFfXmYqBii6pVmvEZ4B2uq1aUre80TRtQl8n54s"/>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Suites Section (Bento/Parallax Grid) -->
+<section class="py-section-gap-mobile md:py-section-gap-desktop bg-surface-container-lowest px-margin-mobile md:px-section-gap-mobile" id="suites">
+<div class="max-w-container-max mx-auto flex flex-col gap-16">
+<div class="text-center flex flex-col items-center gap-6">
+<p class="font-label-sm text-label-sm uppercase tracking-widest text-secondary fade-in-up">Bộ Sưu Tập</p>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary fade-in-up">Phòng Nghỉ Hoàng Gia</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[800px]">
+<!-- Bento Item 1 -->
+<div class="md:col-span-8 md:row-span-2 relative group overflow-hidden fade-in-up h-[400px] md:h-full cursor-pointer">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" data-alt="The master suite of a luxury hotel, showcasing a sprawling, open-plan layout. A low-profile, bespoke king-sized bed with plush white linens sits centrally. The color palette is strictly monochrome with deep charcoals and pristine whites, elevated by subtle champagne gold metallic trims on the nightstands. A large panoramic window offers a cinematic view of a misty city skyline. The lighting is cinematic, moody, and sophisticated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfwlJEdKh2a2WVrrigCbOUzotp2eIjSGjYdbD6QxX6iG6FXvysL2dV8OPZwYbEI_wVuwRlx6hCUPhVVs1lo5H9sy1gJKshn0nZFO1txDDh9wxVs1DI8kljpyyTaXOGWAGWKzKiOHu5rsiOdr5AfzlbH8QEd7hq5CYb8TGGdNdQz509muEQS21Cyrqjz0MuEKe2wivEXRIbThatjvHdU1xI1szDa-dusm65ZbY8dry3XdSwgTRvUjhFMVAD3tv7yEFoYGG3Xu2urlM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-8 flex flex-col gap-2 text-white">
+<span class="bg-white/20 backdrop-blur-md px-3 py-1 font-label-sm text-label-sm tracking-widest uppercase w-max">Presidential</span>
+<h3 class="font-headline-md text-headline-md">Elysian Grand Suite</h3>
+<p class="font-body-md text-body-md opacity-80 hidden md:block max-w-md">Đỉnh cao của sự xa xỉ, không gian riêng tư tuyệt đối với tầm nhìn toàn cảnh 360 độ.</p>
+</div>
+</div>
+<!-- Bento Item 2 -->
+<div class="md:col-span-4 md:row-span-1 relative group overflow-hidden fade-in-up h-[300px] md:h-full cursor-pointer" style="transition-delay: 100ms;">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" data-alt="A close-up view of a high-end luxury bathroom in a boutique hotel. A freestanding, sculptural matte white bathtub is the focal point, resting on a floor of dark, heavily veined marble. Minimalist gold fixtures contrast beautifully against the cool tones. Soft, ambient light filters through frosted glass, creating a sanctuary of calm and quiet luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi1Qq46aBqRmCnda3viSpx-2s_t4pTQhDbpbqrHtnO0HaL0tNquBfprS6NRYkjZRFC6nGFq77XcPZCsLD2L3-8Qmh5fj8dqkY8TJsWVuy0qvf6H_NsdH_N6K7F1BMJTmscMg265orV4fnJw_2xzo-cEGR-9t9iPgq8QfP8yYQn4Vm_cZ1aYlYD0q6NFfWdJ-AVqTxk_C_Z0465mSRSsi8hPfCRfRmkdDsK_9l2DbnaRIkq_IJ47JFwSP61UXdMCwmVfwmExAwEKkY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-6 flex flex-col gap-1 text-white">
+<h3 class="font-headline-md text-2xl">Spa Sanctuary</h3>
+<span class="font-label-sm text-label-sm tracking-widest uppercase opacity-70">Khám Phá</span>
+</div>
+</div>
+<!-- Bento Item 3 -->
+<div class="md:col-span-4 md:row-span-1 relative group overflow-hidden fade-in-up h-[300px] md:h-full cursor-pointer" style="transition-delay: 200ms;">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105" data-alt="A refined sitting area within a luxury hotel suite. Two elegant, low-slung charcoal velvet armchairs face a sleek marble coffee table. A minimalist floor lamp casts a warm, golden glow across the textured cream walls. The aesthetic is strictly 'quiet luxury', relying on impeccable proportions and premium materials rather than loud patterns." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDzSYCvPE93jK4i9nN4ziJ_Ot7zU_DGKEjr4w3k25mcMlCzEJPoMU7nEBE4YZdtXbguGLnZbv6BZf62B1huzljd_QFhe97LOajF4vpdvNg_9cQbZ00R6V6A35mjMTNX5Vlx-pZ5-Q0NdHqB-lkFkESrCkoGh8xSc-3TB5yR6cJcZHUZqKfb2Qqgjfsf5HBgKFiosy0M3NWSk-WK3PFWegiX7PugCL-mZTEPdv3VhIUHp5Xve0KAiIsz0ZnShHH5XZ1u3-fYT_bsv4g')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-6 flex flex-col gap-1 text-white">
+<h3 class="font-headline-md text-2xl">Heritage Room</h3>
+<span class="font-label-sm text-label-sm tracking-widest uppercase opacity-70">Khám Phá</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. Experience Section -->
+<section class="py-section-gap-mobile md:py-section-gap-desktop px-margin-mobile md:px-section-gap-mobile relative min-h-[819px] flex items-center justify-center overflow-hidden" id="experience">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover scale-110" data-alt="A breathtaking, cinematic wide shot of a luxury hotel's infinity pool at dusk. The water acts as a perfect mirror, reflecting the deep purples and warm golds of the sunset sky. Surrounding the pool are minimalist, architectural cabanas with subtle ambient uplighting. The overall scene exudes absolute tranquility, exclusivity, and high-end modern design." id="parallax-bg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBypnkCV9glcNnpbnFQg3-SJlmnEpYoJFEXlooBrQvelQcOCAE5Cs5LdYmk255beIUEYtdw4cC5A2zzHpCWip2hs5yfrpc42V0WxGTxukI_waF9xFd-y9lMpKqCnxDp24drTKXMWvlzOnI2TKEiLL0qIjFe6k-9iilO47lHjh81xTSmIklwwCt8b0cdrcQPtAak6QFbQFlocMXOFEMpPbaoDTdlFNqw4xatqGXN2_SG6GIPAFSpPV3N7q8c0X9u8gyeUZ-XldsIlkE"/>
+<div class="absolute inset-0 bg-black/40"></div>
+</div>
+<div class="relative z-10 text-center text-white flex flex-col items-center gap-8 max-w-3xl mx-auto px-4">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg fade-in-up">Trải Nghiệm Đẳng Cấp</h2>
+<p class="font-body-lg text-body-lg opacity-90 fade-in-up">Vượt lên trên những tiêu chuẩn thông thường, Elysia mang đến những hành trình cảm xúc được thiết kế riêng biệt cho từng thượng khách.</p>
+<div class="flex flex-wrap justify-center gap-4 mt-8 fade-in-up">
+<span class="px-6 py-2 border border-white/30 backdrop-blur-sm font-label-sm text-label-sm uppercase tracking-widest">Ẩm Thực</span>
+<span class="px-6 py-2 border border-white/30 backdrop-blur-sm font-label-sm text-label-sm uppercase tracking-widest">Spa &amp; Wellness</span>
+<span class="px-6 py-2 border border-white/30 backdrop-blur-sm font-label-sm text-label-sm uppercase tracking-widest">Nghệ Thuật</span>
+</div>
+</div>
+</section>
+<!-- 5. CTA Section (Booking Form) -->
+<section class="py-section-gap-mobile md:py-section-gap-desktop bg-surface px-margin-mobile md:px-section-gap-mobile" id="reservations">
+<div class="max-w-4xl mx-auto flex flex-col items-center gap-12 text-center">
+<div class="flex flex-col gap-4 items-center">
+<span class="material-symbols-outlined text-4xl text-secondary fade-in-up">key</span>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary fade-in-up">Đặt Phòng Ngay</h2>
+<p class="font-body-md text-body-md text-on-surface-variant fade-in-up">Bắt đầu hành trình của bạn tại Elysia.</p>
+</div>
+<form class="w-full grid grid-cols-1 md:grid-cols-2 gap-8 fade-in-up">
+<div class="flex flex-col gap-2 text-left">
+<label class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Ngày Nhận Phòng</label>
+<div class="relative">
+<input class="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 focus:border-primary font-body-md text-primary transition-colors cursor-pointer" type="date"/>
+</div>
+</div>
+<div class="flex flex-col gap-2 text-left">
+<label class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Ngày Trả Phòng</label>
+<div class="relative">
+<input class="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 focus:border-primary font-body-md text-primary transition-colors cursor-pointer" type="date"/>
+</div>
+</div>
+<div class="flex flex-col gap-2 text-left">
+<label class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Số Khách</label>
+<select class="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 focus:border-primary font-body-md text-primary transition-colors cursor-pointer">
+<option>1 Khách</option>
+<option selected="">2 Khách</option>
+<option>3 Khách</option>
+<option>4 Khách</option>
+</select>
+</div>
+<div class="flex flex-col gap-2 text-left">
+<label class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Loại Phòng</label>
+<select class="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 focus:border-primary font-body-md text-primary transition-colors cursor-pointer">
+<option>Elysian Grand Suite</option>
+<option>Spa Sanctuary</option>
+<option>Heritage Room</option>
+</select>
+</div>
+<div class="md:col-span-2 mt-8">
+<button class="w-full md:w-auto bg-primary text-on-primary px-12 py-4 font-label-sm text-label-sm uppercase tracking-widest hover:bg-secondary transition-colors duration-300" type="button">Kiểm Tra Trống</button>
+</div>
+</form>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface dark:bg-primary-container border-t border-outline-variant w-full py-section-gap-mobile">
+<div class="max-w-container-max mx-auto px-margin-mobile flex flex-col items-center gap-base">
+<div class="font-headline-lg text-headline-lg text-primary dark:text-primary-fixed mb-8">ELYSIA</div>
+<div class="flex flex-wrap justify-center gap-8 mb-8">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-primary-container hover:text-secondary transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-primary-container hover:text-secondary transition-colors duration-200" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-primary-container hover:text-secondary transition-colors duration-200" href="#">Sustainability</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-primary-container hover:text-secondary transition-colors duration-200" href="#">Careers</a>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-on-primary-container opacity-60 text-center">© 2024 ELYSIA LUXURY HOTELS. ALL RIGHTS RESERVED.</p>
+</div>
+</footer>
+<!-- Interactive Scripts -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Intersection Observer for scroll animations (fade-in, clip-path)
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Optional: unobserve after animating to keep it static once loaded
+                        // observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const animatedElements = document.querySelectorAll('.fade-in-up, .clip-path-reveal');
+            animatedElements.forEach(el => observer.observe(el));
+
+
+            // Nav background on scroll
+            const nav = document.getElementById('main-nav');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    nav.classList.remove('bg-transparent');
+                    nav.classList.add('bg-surface', 'border-b', 'border-outline-variant');
+                } else {
+                    nav.classList.add('bg-transparent');
+                    nav.classList.remove('bg-surface', 'border-b', 'border-outline-variant');
+                }
+            });
+
+            // Parallax and 3D Model transformation logic based on scroll
+            const threeDContainer = document.getElementById('threed-container');
+            const parallaxBg = document.getElementById('parallax-bg');
+            
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
+                
+                // 1. Simple Parallax for Experience section image
+                if (parallaxBg) {
+                    const experienceSection = document.getElementById('experience');
+                    const sectionTop = experienceSection.offsetTop;
+                    if (scrollY > sectionTop - windowHeight && scrollY < sectionTop + experienceSection.offsetHeight) {
+                        const yPos = (scrollY - sectionTop) * 0.2;
+                        parallaxBg.style.transform = `translateY(${yPos}px) scale(1.1)`;
+                    }
+                }
+
+                // 2. Manipulate the 3D container to simulate scrollytelling
+                // Note: Actual 3D manipulation would typically happen inside the <threejs-scene> context via its own API,
+                // but since it's a fixed DOM element here, we can apply CSS transforms to the container to simulate
+                // camera movement (scale, rotation, translation) as requested.
+                
+                // Normalize scroll position (0 to 1 over the document height)
+                const docHeight = document.documentElement.scrollHeight - windowHeight;
+                const scrollProgress = scrollY / docHeight;
+
+                // Example: Shift right during 'Architecture', scale up during 'Suites'
+                let translateX = 0;
+                let scale = 1;
+                let rotateZ = 0;
+
+                const archSection = document.getElementById('architecture');
+                if (archSection) {
+                    const archTop = archSection.offsetTop;
+                    // If we are around the architecture section, shift the model to the right side
+                    if (scrollY > archTop - windowHeight/2 && scrollY < archTop + archSection.offsetHeight) {
+                        translateX = 25; // viewport width percentage shift
+                        scale = 1.2;
+                    }
+                }
+
+                // Apply transforms smoothly to the fixed container
+                if(threeDContainer) {
+                   threeDContainer.style.transform = `translateX(${translateX}vw) scale(${scale}) rotate(${rotateZ}deg)`;
+                }
+            });
+        });
+    </script>
+</body></html>

@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HUCE HOTEL - Hệ thống quản lý</title>
+    <title>Paradise - Hệ thống quản lý</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Model Viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     
@@ -21,8 +24,16 @@
     <div id="customer-view">
         <header class="header">
             <div class="logo" onclick="showHomePage(); window.scrollTo({top:0, behavior:'smooth'});" style="cursor: pointer;">
-                <span class="logo-main">HUCE HOTEL</span>
-                <span class="logo-sub">Luxury · Est. 2024</span>
+                <svg viewBox="0 0 100 100" class="logo-icon" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M50 15 C 25 35, 30 65, 50 80 C 70 65, 75 35, 50 15 Z" />
+                    <path d="M50 80 C 15 80, 10 50, 25 45 C 35 42, 42 48, 45 55" />
+                    <path d="M50 80 C 85 80, 90 50, 75 45 C 65 42, 58 48, 55 55" />
+                    <line x1="50" y1="50" x2="50" y2="95" />
+                </svg>
+                <div class="logo-text-wrapper">
+                    <span class="logo-main">Paradise</span>
+                    <span class="logo-sub">Luxury · Est. 2024</span>
+                </div>
             </div>
             <nav class="nav-menu">
                 <a href="#" class="nav-link" data-text="Trang chủ" onclick="showHomePage()">Trang chủ</a>
@@ -59,7 +70,7 @@
                 
                 <div class="hero-stats">
                     <div class="hero-stat">
-                        <span class="hero-stat-num" data-target="48">0</span>
+                        <span class="hero-stat-num" id="stat-rooms-count" data-target="48">0</span>
                         <span class="hero-stat-label">Phòng nghỉ</span>
                     </div>
                     <div class="hero-stat-divider"></div>
@@ -69,7 +80,7 @@
                     </div>
                     <div class="hero-stat-divider"></div>
                     <div class="hero-stat">
-                        <span class="hero-stat-num" data-target="12">0</span>
+                        <span class="hero-stat-num" id="stat-services-count" data-target="12">0</span>
                         <span class="hero-stat-label">Dịch vụ cao cấp</span>
                     </div>
                     <div class="hero-stat-divider"></div>
@@ -103,13 +114,7 @@
                     <div class="room-skeleton"></div>
                 </div>
 
-                <div class="reset-wrap">
-                    <button class="reset-btn" onclick="resetData()">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.36"/></svg>
-                        Khôi phục dữ liệu gốc
-                    </button>
-                </div>
-            </section>
+
         </main>
 
             
@@ -118,31 +123,45 @@
                     <div class="search-field">
                         <label>
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                            Ngày đến
+                            Thời gian lưu trú
                         </label>
-                        <input type="date" id="search-checkin">
+                        <input type="text" id="search-date-range" placeholder="Chọn ngày nhận & trả phòng" readonly>
                     </div>
-                    <div class="search-field">
-                        <label>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                            Ngày đi
-                        </label>
-                        <input type="date" id="search-checkout">
-                    </div>
-                    <div class="search-field">
+                    
+                    <div class="search-field" id="guest-field-container" style="position: relative;">
                         <label>
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            Người lớn
+                            Số khách
                         </label>
-                        <input type="number" id="search-adults" min="1" value="1">
+                        <input type="text" id="search-guests-display" value="1 Người lớn, 0 Trẻ em" readonly style="cursor: pointer;">
+                        
+                        <!-- Guest Popover -->
+                        <div class="guest-popover" id="guest-popover">
+                            <div class="guest-row">
+                                <div class="guest-info">
+                                    <div class="guest-title">Người lớn</div>
+                                    <div class="guest-desc">Từ 13 tuổi trở lên</div>
+                                </div>
+                                <div class="guest-controls">
+                                    <button type="button" class="guest-btn" id="adult-minus">-</button>
+                                    <span class="guest-count" id="adult-count">1</span>
+                                    <button type="button" class="guest-btn" id="adult-plus">+</button>
+                                </div>
+                            </div>
+                            <div class="guest-row">
+                                <div class="guest-info">
+                                    <div class="guest-title">Trẻ em</div>
+                                    <div class="guest-desc">Từ 0-12 tuổi</div>
+                                </div>
+                                <div class="guest-controls">
+                                    <button type="button" class="guest-btn" id="child-minus">-</button>
+                                    <span class="guest-count" id="child-count">0</span>
+                                    <button type="button" class="guest-btn" id="child-plus">+</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="search-field">
-                        <label>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="3"/></svg>
-                            Trẻ em
-                        </label>
-                        <input type="number" id="search-children" min="0" value="0">
-                    </div>
+
                     <div class="search-field">
                         <label>
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -163,18 +182,13 @@
                         <select id="room-price-search">
                             <option value="0-999999999">Tất cả mức giá</option>
                             <option value="0-1000000">Dưới 1.000.000đ</option>
-                            <option value="1000000-2500000">1.000.000đ – 2.500.000đ</option>
+                            <option value="1000000-2500000">1.000.000đ - 2.500.000đ</option>
                             <option value="2500000-999999999">Trên 2.500.000đ</option>
                         </select>
                     </div>
                     <button class="search-btn" onclick="searchRooms()">Tìm phòng</button>
                 </div>
             </div>
-
-            
-            <button class="search-bar-toggle-btn" id="search-bar-toggle-btn" aria-label="Hiện thanh tìm phòng">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-            </button>
 
         <main id="review-screen" style="display: none;">
 
@@ -187,9 +201,8 @@
                     </h1>
                 </div>
                 <div class="rv-hero-quote">
-                    <p>“HUCE Hotel là tổ hợp khách sạn đạt tiêu chuẩn 5 sao với vị trí đắc địa, không gian sang trọng cùng dịch vụ Spa, Nhà hàng, Hồ bơi và đội ngũ nhân viên tận tâm…”</p>
+                    <p>“Paradise là tổ hợp khách sạn đạt tiêu chuẩn 5 sao với vị trí đắc địa, không gian sang trọng cùng dịch vụ Spa, Nhà hàng, Hồ bơi và đội ngũ nhân viên tận tâm…”</p>
                     <span class="rv-quote-line"></span>
-                    <p class="rv-quote-author">BY <span class="hotel-name-display">HUCE HOTEL</span> TEAM</p>
                 </div>
             </section>
 
@@ -294,14 +307,13 @@
             <section class="rv-hero" id="svc-hero">
                 <div class="rv-hero-inner">
                     <h1 class="rv-hero-title" onclick="document.getElementById('svc-anchor').scrollIntoView({behavior:'smooth', block:'start'})" title="Bấm để xem danh sách dịch vụ">
-                        <span class="rv-script" data-text="Dịch Vụ">Dịch vụ</span>
+                        <span class="rv-script" data-text="Dịch vụ">Dịch vụ</span>
                         <span class="rv-tracked"><span class="rv-split-char">t</span><span class="rv-split-char">i</span><span class="rv-split-char">ệ</span><span class="rv-split-char">n</span>&nbsp;<span class="rv-split-char">í</span><span class="rv-split-char">c</span><span class="rv-split-char">h</span></span>
                     </h1>
                 </div>
                 <div class="rv-hero-quote">
-                    <p>"Từ phút thư giãn tại Spa, bữa sáng buffet thượng hạng đến những chuyến đưa đón tận tâm — mỗi tiện ích tại HUCE Hotel đều được chăm chút để nâng tầm kỳ nghỉ của bạn."</p>
+                    <p>"Từ phút thư giãn tại Spa, bữa sáng buffet thượng hạng đến những chuyến đưa đón tận tâm — mỗi tiện ích tại Paradise đều được chăm chút để nâng tầm kỳ nghỉ của bạn."</p>
                     <span class="rv-quote-line"></span>
-                    <p class="rv-quote-author">BY <span class="hotel-name-display">HUCE HOTEL</span> TEAM</p>
                 </div>
             </section>
 
@@ -394,7 +406,162 @@
                 </section>
             </div>
         </main>
-        <footer class="footer"><h2><span class="hotel-name-display">HUCE HOTEL</span></h2><p>© 2026 Quản lý Hệ thống Khách sạn.</p></footer>
+
+        <main id="about-screen" style="display: none;">
+
+            <div class="scrolly-wrapper">
+                <div class="scrolly-bg-container" style="background: radial-gradient(circle at 50% 50%, #1f2226 0%, #08090a 100%); overflow: hidden;">
+                    <!-- Đã gỡ bỏ ảnh nền để dùng gradient trơn sang trọng, làm nổi bật mô hình 3D -->
+
+                    <!-- 3D Hotel Model -->
+                    <model-viewer 
+                        id="hero-3d-model"
+                        src="models/skyscraper/scene.gltf" 
+                        alt="3D Hotel Model" 
+                        camera-controls
+                        disable-zoom
+                        disable-pan
+                        interaction-prompt="none"
+                        camera-orbit="-45deg 75deg 20%" 
+                        camera-target="auto auto auto"
+                        min-camera-orbit="auto auto 0%"
+                        max-camera-orbit="auto 85deg auto"
+                        field-of-view="30deg"
+                        environment-image="neutral"
+                        exposure="1.2"
+                        shadow-intensity="1.5"
+                        style="
+                            position: absolute; 
+                            top: 0; 
+                            left: 0; 
+                            width: 100%; 
+                            height: 100%; 
+                            z-index: 2;
+                        ">
+                    </model-viewer>
+
+                    <!-- Lớp sương mù/Vignette che viền mặt đất -->
+                    <div style="
+                        position: absolute; 
+                        top: 0; 
+                        left: 0; 
+                        width: 100%; 
+                        height: 100%; 
+                        z-index: 3; 
+                        pointer-events: none; 
+                        background: radial-gradient(ellipse 100% 100% at 35% 50%, transparent 30%, #08090a 85%);
+                    "></div>
+
+                    <div class="scrolly-overlay" style="z-index: 4; background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, #000 100%);"></div>
+                </div>
+
+                <div class="scrolly-content">
+                    <div class="scrolly-intro">
+                        <h1>VỀ CHÚNG TÔI</h1>
+                        <p>Khám phá câu chuyện đằng sau sự vĩ đại</p>
+                        <div class="scroll-indicator">
+                            <span>Cuộn xuống</span>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="scrolly-scene" id="scene-1">
+                        <div class="scene-text anim-slide-r">
+                            <h2>Bức tranh Toàn cảnh</h2>
+                            <p>Tọa lạc tại vị trí đắc địa nhất, Paradise vươn mình như một biểu tượng của sự uy nghi và lộng lẫy. Từ góc nhìn bao quát, tòa nhà như một viên ngọc quý phát sáng giữa lòng đô thị phồn hoa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                        </div>
+                        <img class="scene-img scene-img-right anim-tilt" src="images/pexels-phamthe-24771668.jpg" alt="Hotel exterior panorama" loading="lazy">
+                    </div>
+                    <div class="scrolly-scene" id="scene-2">
+                        <img class="scene-img scene-img-left anim-flip" src="images/pexels-laysa-silva-2150933900-31418731.jpg" alt="Interior Details" loading="lazy">
+                        <div class="scene-text right-align anim-slide-l">
+                            <h2>Kiến trúc Phục Hưng</h2>
+                            <p>Từng vòm cửa, từng hàng cột đều được thiết kế tỉ mỉ mang âm hưởng kiến trúc Châu Âu cổ điển kết hợp những hình khối 3D đương đại. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        </div>
+                    </div>
+                    <div class="scrolly-scene" id="scene-3">
+                        <div class="scene-text anim-zoom">
+                            <h2>Không gian Đại sảnh</h2>
+                            <p>Bước qua cánh cửa, bạn sẽ choáng ngợp trước không gian đại sảnh lộng lẫy với trần nhà cao vút và những chiếc đèn chùm pha lê khổng lồ. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                        </div>
+                        <img class="scene-img scene-img-right anim-tilt" src="images/pexels-thanh-lam-822158566-19621560.jpg" alt="Lobby details" loading="lazy">
+                    </div>
+                    <div class="scrolly-scene" id="scene-4">
+                        <img class="scene-img scene-img-left anim-spin" src="images/pexels-devansh-rajput-2160987549-37160594.jpg" alt="Room details" loading="lazy">
+                        <div class="scene-text right-align anim-slide-l">
+                            <h2>Chạm vào Tinh hoa</h2>
+                            <p>Cận cảnh từng chi tiết hoa văn chạm trổ, từng bức điêu khắc nghệ thuật đều kể một câu chuyện riêng về sự hoàn mỹ. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        </div>
+                    </div>
+                    <div class="scrolly-scene" id="scene-5">
+                        <div class="scene-text anim-slide-r">
+                            <h2>Trải nghiệm Thượng lưu</h2>
+                            <p>Thưởng thức ẩm thực 5 sao tại nhà hàng trên cao với tầm nhìn vô cực, nơi mọi giác quan của bạn được đánh thức một cách trọn vẹn nhất. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+                        </div>
+                        <img class="scene-img scene-img-right anim-flip" src="images/pexels-change-c-c-974768353-28616663.jpg" alt="Fine dining" loading="lazy">
+                    </div>
+                    <div class="scrolly-scene scrolly-outro">
+                        <div class="outro-text">
+                            <h3 class="outro-eyebrow">Paradise & RESORT</h3>
+                            <h2>Sẵn sàng Trải nghiệm?</h2>
+                            <p class="outro-desc">Hãy để chúng tôi đánh thức mọi giác quan của bạn và tạo nên những kỷ niệm khó quên tại thiên đường nghỉ dưỡng 5 sao bậc nhất.</p>
+                            <div class="outro-contact">
+                                <span>T. +84 123 456 789</span>
+                                <span style="opacity: 0.3;">|</span>
+                                <span>E. reservation@hucehotel.com</span>
+                            </div>
+                            <button onclick="showHomePage(); window.scrollTo(0, 0);" class="outro-btn">TRỞ VỀ TRANG CHỦ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer-modern">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <svg viewBox="0 0 100 100" class="logo-icon footer-logo-icon" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M50 15 C 25 35, 30 65, 50 80 C 70 65, 75 35, 50 15 Z" />
+                            <path d="M50 80 C 15 80, 10 50, 25 45 C 35 42, 42 48, 45 55" />
+                            <path d="M50 80 C 85 80, 90 50, 75 45 C 65 42, 58 48, 55 55" />
+                            <line x1="50" y1="50" x2="50" y2="95" />
+                        </svg>
+                        <span>Paradise</span>
+                    </div>
+                    <p class="footer-slogan">Trải nghiệm nghỉ dưỡng đẳng cấp 5 sao với không gian sang trọng và dịch vụ tận tâm. Nơi lưu giữ những khoảnh khắc tuyệt vời của bạn.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>KHÁM PHÁ</h3>
+                    <ul>
+                        <li><a href="#" onclick="showAboutPage(); return false;">Về chúng tôi</a></li>
+                        <li><a href="#room-anchor">Phòng & Suite</a></li>
+                        <li><a href="#" onclick="showServicePage(); window.scrollTo({top:0, behavior:'smooth'});">Dịch vụ & Spa</a></li>
+                        <li><a href="#" onclick="showReviewPage(); window.scrollTo({top:0, behavior:'smooth'});">Đánh giá khách hàng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>LIÊN HỆ</h3>
+                    <p>📍 55 Giải Phóng, Hai Bà Trưng, Hà Nội</p>
+                    <p>📞 +84 123 456 789</p>
+                    <p>✉️ contact@hucehotel.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Paradise. All rights reserved.</p>
+                <div class="social-icons">
+                    <a href="https://facebook.com/tuananhisme" target="_blank" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="https://instagram.com/tuananh2601006/" target="_blank" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://github.com/tunan0126" target="_blank" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    </a>
+                </div>
+            </div>
+        </footer>
     </div>
 
     
@@ -576,7 +743,7 @@
     <div id="login-modal" class="modal-overlay">
         <div class="login-box">
             <button class="close-btn" onclick="closeLoginModal()">✕</button>
-            <div class="login-header"><h2><span class="hotel-name-display">HUCE HOTEL</span></h2><p>HỆ THỐNG QUẢN LÝ</p></div>
+            <div class="login-header"><h2><span class="hotel-name-display">Paradise</span></h2><p>HỆ THỐNG QUẢN LÝ</p></div>
             <p class="error-msg" id="login-error" style="display: none;">Sai tên đăng nhập hoặc mật khẩu!</p>
             <div class="login-form-group"><label>BẠN LÀ AI?</label><select id="user-role"><option value="customer">Khách hàng</option><option value="admin">Quản trị viên</option></select></div>
             <div class="login-form-group"><label>TÊN ĐĂNG NHẬP / EMAIL</label><input type="email" id="username" placeholder="Nhập email"></div>
@@ -589,7 +756,7 @@
     <div id="register-modal" class="modal-overlay">
         <div class="login-box" style="max-height: 90vh; overflow-y: auto;">
             <button class="close-btn" onclick="closeRegisterModal()">✕</button>
-            <div class="login-header"><h2><span class="hotel-name-display">HUCE HOTEL</span></h2><p>ĐĂNG KÝ THÀNH VIÊN</p></div>
+            <div class="login-header"><h2><span class="hotel-name-display">Paradise</span></h2><p>ĐĂNG KÝ THÀNH VIÊN</p></div>
             <div class="login-form-group"><label>HỌ VÀ TÊN</label><input type="text" id="reg-fullname"></div>
             <div class="login-form-group"><label>EMAIL (TÊN ĐĂNG NHẬP)</label><input type="email" id="reg-username" placeholder="Nhập email"></div>
             <div class="login-form-group"><label>SỐ ĐIỆN THOẠI</label><input type="text" id="reg-phone"></div>
@@ -625,7 +792,7 @@
                         <div class="booking-timeline">
                             <div class="timeline-box">
                                 <span class="tl-label">NHẬN PHÒNG</span>
-                                <input type="text" id="booking-checkin-input" class="modern-time-picker" onchange="recalculateBooking()">
+                                <input type="text" id="booking-checkin-input" class="modern-time-picker" placeholder="Chọn ngày" onchange="recalculateBooking()">
                             </div>
                             <div class="timeline-divider">
                                 <span class="tl-nights" id="booking-nights-badge">1 đêm</span>
@@ -633,7 +800,7 @@
                             </div>
                             <div class="timeline-box text-right">
                                 <span class="tl-label">TRẢ PHÒNG</span>
-                                <input type="text" id="booking-checkout-input" class="modern-time-picker" onchange="recalculateBooking()">
+                                <input type="text" id="booking-checkout-input" class="modern-time-picker" placeholder="Chọn ngày" onchange="recalculateBooking()">
                             </div>
                         </div>
                     </div>
@@ -658,9 +825,9 @@
                             <span>Phí dịch vụ thêm</span>
                             <span id="booking-services-total-price" class="fw-bold">0 đ</span>
                         </div>
-                        <div class="invoice-row text-success">
-                            <span>Thuế VAT & Phí phục vụ</span>
-                            <span>Đã bao gồm</span>
+                        <div class="invoice-row text-danger">
+                            <span>Thuế VAT (<span id="booking-vat-percent">0</span>%)</span>
+                            <span id="booking-vat-price" class="fw-bold">+0 đ</span>
                         </div>
                         
                         <div class="invoice-divider-line"></div>
@@ -678,7 +845,37 @@
         </div>
     </div>
 
-    
+    <!-- MODAL XEM CHI TIẾT PHÒNG -->
+    <dialog id="modal-room-detail" class="modern-dialog">
+        <div class="room-detail-box">
+            <button class="close-btn" onclick="closeRoomDetail()">✕</button>
+            <div class="room-detail-img-wrap">
+                <img id="detail-room-img" src="" alt="Ảnh phòng">
+                <span id="detail-room-status-badge" class="room-detail-badge"></span>
+            </div>
+            <div class="room-detail-body">
+                <div class="room-detail-left">
+                    <p class="room-detail-type" id="detail-room-type"></p>
+                    <h2 class="room-detail-name" id="detail-room-name"></h2>
+                    <div class="room-detail-meta">
+                        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg> <span id="detail-room-beds"></span> giường</span>
+                        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Tối đa <span id="detail-room-max"></span> người</span>
+                        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Phòng <span id="detail-room-number"></span></span>
+                    </div>
+                    <p class="room-detail-desc" id="detail-room-desc"></p>
+                </div>
+                <div class="room-detail-right">
+                    <div class="room-detail-price-box">
+                        <span class="room-detail-price" id="detail-room-price"></span>
+                        <span class="room-detail-per">VND / đêm</span>
+                    </div>
+                    <div id="detail-room-available" style="margin:12px 0;font-size:13px;color:#64748b;"></div>
+                    <button class="room-detail-book-btn" id="detail-book-btn" onclick="bookFromDetail()">CHỌN NGÀY ĐẶT</button>
+                    <p id="detail-unavailable-msg" style="display:none;text-align:center;color:#ef4444;font-size:13px;font-weight:600;margin-top:12px;"></p>
+                </div>
+            </div>
+        </div>
+    </dialog>
 
     
     <div id="modal-room" class="admin-modal-overlay" onclick="if(event.target===this)closeAdminModal('modal-room')">
@@ -806,5 +1003,42 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script>
+        // Link scroll position to 3D model rotation
+        window.addEventListener('scroll', () => {
+            const modelViewer = document.getElementById('hero-3d-model');
+            if (modelViewer && document.getElementById('about-screen').style.display !== 'none') {
+                // Calculate how far down we've scrolled
+                const scrollY = window.scrollY;
+                
+                // Tính toán phần trăm cuộn của toàn bộ trang web (từ 0 đến 1)
+                const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollProgress = maxScroll > 0 ? (scrollY / maxScroll) : 0;
+                
+                // 1. Zoom: Bắt đầu từ xa (100% - "bé bé"), zoom lại gần (15%)
+                const startRadius = 50;
+                const endRadius = 25;
+                const newRadius = startRadius - (scrollProgress * (startRadius - endRadius));
+                
+                // 2. Trượt: Bắt đầu từ đỉnh (150m), trượt xuống chân (0m)
+                const startY = 100;
+                const endY = -10;
+                const targetY = startY - (scrollProgress * (startY - endY));
+                
+                // 3. Xoay: Xoay về mặt sau của tòa nhà (nơi có hồ bơi/marina)
+                // Đổi sang góc 135 độ (đối diện với mặt đường lộ ở góc -45 độ)
+                const startOrbit = 45;
+                const endOrbit = 0;
+                const newOrbit = startOrbit + (scrollProgress * (endOrbit - startOrbit));
+                
+                // 4. Dịch ngang: Để dịch model sang TRÁI, tăng số X lên (ví dụ: 15m)
+                // Để dịch model sang PHẢI, dùng số âm (ví dụ: -15m)
+                const targetX = 15 ; 
+                
+                modelViewer.setAttribute('camera-orbit', `${newOrbit}deg 75deg ${newRadius}%`);
+                modelViewer.setAttribute('camera-target', `${targetX}m ${targetY}m 0m`);
+            }
+        });
+    </script>
 </body>
 </html>

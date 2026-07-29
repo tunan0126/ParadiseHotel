@@ -20,7 +20,22 @@ function initData() {
         .then(res => res.json())
         .then(data => {
             document.querySelectorAll('.hotel-name-display').forEach(el => el.innerText = data.name);
-        }).catch(() => {});
+            window.globalVat = data.vat || 0;
+        }).catch(() => { window.globalVat = 0; });
+
+    Promise.all([
+        fetch('http://127.0.0.1:8000/api/rooms').then(res => res.ok ? res.json() : []),
+        fetch('http://127.0.0.1:8000/api/admin/services').then(res => res.ok ? res.json() : [])
+    ]).then(([rooms, services]) => {
+        const roomStat = document.getElementById('stat-rooms-count');
+        const serviceStat = document.getElementById('stat-services-count');
+        if (roomStat && rooms.length) roomStat.dataset.target = rooms.length;
+        if (serviceStat && services.length) serviceStat.dataset.target = services.length;
+        initCountUp();
+    }).catch(e => {
+        console.error("Error fetching real time stats", e);
+        initCountUp();
+    });
 }
 
 async function login() {
@@ -36,11 +51,11 @@ async function login() {
         });
         
         if (!response.ok) {
-            return showToast("Tài khoản hoặc mật khẩu trong SQL Server không đúng!", "error");
+            return showToast("Tài khoản hoặc mật khẩu không chính xác.", "error");
         }
         
         const res = await response.json();
-        if (res.role !== roleInp) return showToast("Tài khoản không sở hữu vai trò truy cập này!", "error");
+        if (res.role !== roleInp) return showToast("Bạn không có quyền truy cập vào khu vực này.", "error");
         
         localStorage.setItem('is_logged_in', 'true');
         localStorage.setItem('current_user', res.fullname); 
@@ -48,10 +63,10 @@ async function login() {
         localStorage.setItem('current_role', res.role);
         
         closeLoginModal(); 
-        if (res.role === 'admin') { showAdminPage(); showToast(`Hệ thống xác thực: Xin chào Admin!`, "success"); } 
-        else { showHomePage(); updateHeaderUI(); showToast(`Đăng nhập thành công! Xin chào ${res.fullname}`, "success"); }
+        if (res.role === 'admin') { window.location.href = 'admin.html'; } 
+        else { showHomePage(); updateHeaderUI(); showToast(`Đăng nhập thành công. Chào mừng ${res.fullname}!`, "success"); }
     } catch (e) {
-        showToast("Lỗi kết nối nghiêm trọng đến Server Python main.py!", "error");
+        showToast("Không thể kết nối đến hệ thống. Vui lòng thử lại sau.", "error");
     }
 }
 
@@ -65,7 +80,7 @@ function logout() {
     document.getElementById('customer-view').style.display = 'block';
     updateHeaderUI(); 
     showHomePage(); 
-    showToast("Đã kết thúc phiên hoạt động an toàn!", "info");
+    showToast("Bạn đã đăng xuất thành công.", "info");
 }
 
 async function register() {
@@ -90,20 +105,20 @@ async function register() {
         });
         
         if (response.ok) {
-            showToast("Đăng ký thành công! Dữ liệu đã đẩy vào bảng TaiKhoan và KhachHang.", "success"); 
+            showToast("Đăng ký tài khoản thành công! Chào mừng bạn đến với HUCE Hotel.", "success"); 
             switchToLogin();
         } else {
             const err = await response.json();
             showToast(err.detail, "error");
         }
-    } catch (e) { showToast("Sập kết nối API Server!", "error"); }
+    } catch (e) { showToast("Hệ thống đang bận. Vui lòng thử lại sau.", "error"); }
 }
 
 function checkInitialState() {
     if (localStorage.getItem('is_logged_in') === 'true') {
-        if (localStorage.getItem('current_role') === 'admin') showAdminPage();
-        else { showHomePage(); updateHeaderUI(); }
-    } else { showHomePage(); updateHeaderUI(); }
+        if (localStorage.getItem('current_role') === 'admin') window.location.href = 'admin.html';
+        else { showAboutPage(); updateHeaderUI(); }
+    } else { showAboutPage(); updateHeaderUI(); }
 }
 
 function updateHeaderUI() {
@@ -129,17 +144,39 @@ function updateHeaderUI() {
 }
 
 function hideAllScreens() {
-    ['admin-screen', 'profile-screen', 'home-screen', 'review-screen', 'service-screen'].forEach(id => {
+    ['profile-screen', 'home-screen', 'review-screen', 'service-screen', 'about-screen'].forEach(id => {
         let el = document.getElementById(id); if (el) el.style.display = 'none';
     });
     let search = document.getElementById('search-bar');
     if (search) { search.style.display = 'none'; search.classList.remove('search-bar--docked'); }
+    
+    const header = document.querySelector('.header');
+    const footer = document.querySelector('.footer-modern');
+    if (header) header.style.display = 'flex';
+    if (footer) footer.style.display = 'block';
+    
+    const toggleBtn = document.getElementById('search-bar-toggle-btn');
+    if (toggleBtn) toggleBtn.style.display = '';
 }
 
 function showHomePage() { hideAllScreens(); document.getElementById('customer-view').style.display = 'block'; document.getElementById('home-screen').style.display = 'block'; const sb = document.getElementById('search-bar'); if (sb) sb.style.display = 'flex'; renderRooms(); }
 function scrollToReviewForm() {
     const form = document.querySelector('.rv-form-section');
-    if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (form) form.scrollIntoView({ behavior: 'smooth' });
+}
+
+function showAboutPage() {
+    hideAllScreens();
+    document.getElementById('customer-view').style.display = 'block';
+    
+    const header = document.querySelector('.header');
+    const footer = document.querySelector('.footer-modern');
+    if (header) header.style.display = 'none';
+    if (footer) footer.style.display = 'none';
+
+    const aboutScreen = document.getElementById('about-screen');
+    if (aboutScreen) aboutScreen.style.display = 'block';
+    window.scrollTo(0, 0);
 }
 
 function showReviewPage() {
@@ -413,7 +450,7 @@ async function submitReview() {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reviewData)
         });
         if (response.ok) {
-            showToast("Tuyệt vời! Đánh giá của bạn đã được đăng!", "success");
+            showToast("Cảm ơn bạn đã gửi đánh giá! Ý kiến của bạn rất quý giá với chúng tôi.", "success");
             submitBtn.classList.remove('rv-loading');
             submitBtn.classList.add('rv-success');
             setTimeout(() => submitBtn.classList.remove('rv-success'), 1800);
@@ -425,11 +462,11 @@ async function submitReview() {
             renderReviews();
         } else {
             submitBtn.classList.remove('rv-loading');
-            showToast("Lỗi máy chủ! Không thể lưu bài viết.", "error");
+            showToast("Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại.", "error");
         }
     } catch (e) {
         submitBtn.classList.remove('rv-loading');
-        showToast("Mất kết nối với Server!", "error");
+        showToast("Hệ thống đang bận. Vui lòng thử lại sau.", "error");
     }
 }
 
@@ -545,6 +582,18 @@ async function renderRooms(roomsToRender = null) {
         const fragment = document.createDocumentFragment();
         const tempDiv = document.createElement('div');
 
+        const luxuryImages = [
+            "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1200&q=80"
+        ];
+        const bentoClasses = ['bento-large', 'bento-tall', 'bento-small', 'bento-wide', 'bento-small', 'bento-small'];
+
         displayRooms.forEach((room, idx) => {
             let badgeHTML = '';
             let buttonHTML = '';
@@ -567,13 +616,15 @@ async function renderRooms(roomsToRender = null) {
             const typeLabel = room.name.includes('Suite') ? 'Suite · Hạng sang' 
                             : room.name.includes('Deluxe') ? 'Deluxe · Cao cấp'
                             : 'Standard · Tiêu chuẩn';
+                            
+            const imageSrc = luxuryImages[idx % luxuryImages.length];
 
             tempDiv.innerHTML = `
                 <div class="room-card" style="${cardExtraStyle}">
                     <div class="room-card-img-wrap">
                         ${badgeHTML}
                         <span class="room-card-num">Phòng ${room.roomNumber}</span>
-                        <img src="${room.image}" alt="${room.name}" loading="lazy" decoding="async">
+                        <img src="${imageSrc}" alt="${room.name}" loading="lazy" decoding="async">
                     </div>
                     <div class="room-card-body">
                         <p class="room-card-type">${typeLabel}</p>
@@ -591,6 +642,10 @@ async function renderRooms(roomsToRender = null) {
         container.appendChild(fragment);
 
         container.querySelectorAll('.room-card').forEach((card, i) => {
+            const imgWrap = card.querySelector('.room-card-img-wrap');
+            if (imgWrap && displayRooms[i]) {
+                imgWrap.addEventListener('click', () => openRoomDetail(displayRooms[i]));
+            }
             card.style.opacity = '0';
             card.style.transform = 'translateY(24px)';
             setTimeout(() => {
@@ -608,32 +663,110 @@ async function renderRooms(roomsToRender = null) {
     }
 }
 
+let detailRoom = null;
+
+function getRoomTypeLabel(name) {
+    if (name.includes('Suite')) return 'Suite · Hạng sang';
+    if (name.includes('Deluxe')) return 'Deluxe · Cao cấp';
+    return 'Standard · Tiêu chuẩn';
+}
+
+function openRoomDetail(room) {
+    detailRoom = room;
+    const fallbackImg = 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80';
+    const imgEl = document.getElementById('detail-room-img');
+    imgEl.src = room.image || fallbackImg;
+    imgEl.onerror = function() { this.onerror = null; this.src = fallbackImg; };
+
+    document.getElementById('detail-room-type').textContent = getRoomTypeLabel(room.name);
+    document.getElementById('detail-room-name').textContent = room.name;
+    document.getElementById('detail-room-number').textContent = room.roomNumber;
+    document.getElementById('detail-room-beds').textContent = room.beds ?? 1;
+    document.getElementById('detail-room-max').textContent = room.maxPeople ?? 1;
+    document.getElementById('detail-room-desc').textContent =
+        'Phòng được trang bị đầy đủ tiện nghi hiện đại, không gian rộng rãi và thoáng mát.';
+    document.getElementById('detail-room-price').textContent = Number(room.price).toLocaleString('vi-VN');
+
+    const badge = document.getElementById('detail-room-status-badge');
+    const bookBtn = document.getElementById('detail-book-btn');
+    const unavailableMsg = document.getElementById('detail-unavailable-msg');
+    const availableDiv = document.getElementById('detail-room-available');
+
+    if (room.isMyRoom) {
+        badge.textContent = '● PHÒNG CỦA BẠN';
+        badge.className = 'room-detail-badge status-mine-detail';
+        bookBtn.style.display = 'none';
+        unavailableMsg.style.display = 'block';
+        unavailableMsg.textContent = 'Bạn đang sử dụng phòng này. Xem chi tiết ở mục Cá nhân!';
+        availableDiv.textContent = '';
+    } else if (room.isAvailable) {
+        badge.textContent = '● SẴN SÀNG';
+        badge.className = 'room-detail-badge status-ready-detail';
+        bookBtn.style.display = 'block';
+        unavailableMsg.style.display = 'none';
+        availableDiv.textContent = '✅ Phòng đang sẵn sàng đón khách';
+    } else {
+        badge.textContent = '● ĐANG CÓ KHÁCH';
+        badge.className = 'room-detail-badge status-occupied-detail';
+        bookBtn.style.display = 'none';
+        unavailableMsg.style.display = 'block';
+        unavailableMsg.textContent = 'Phòng hiện đang có khách lưu trú';
+        availableDiv.textContent = room.availableFrom
+            ? '📅 Dự kiến trống từ: ' + room.availableFrom
+            : '';
+    }
+
+    document.getElementById('modal-room-detail').showModal();
+}
+
+function closeRoomDetail() {
+    document.getElementById('modal-room-detail').close();
+}
+
+function bookFromDetail() {
+    closeRoomDetail();
+    if (detailRoom) attemptToBook(detailRoom.id, detailRoom.name, detailRoom.price);
+}
+
 async function searchRooms() {
     const selectedType = document.getElementById('room-type-search').value;
     const priceRange = document.getElementById('room-price-search').value;
-    const checkin = document.getElementById('search-checkin').value;
-    const checkout = document.getElementById('search-checkout').value;
-    const totalGuests = (parseInt(document.getElementById('search-adults').value) || 1)
-                      + (parseInt(document.getElementById('search-children').value) || 0);
     const [minPrice, maxPrice] = priceRange.split('-').map(Number);
     const username = localStorage.getItem('current_username') || '';
 
+    let checkin = '';
+    let checkout = '';
+    const dateRangeStr = document.getElementById('search-date-range') ? document.getElementById('search-date-range').value : '';
+    if (dateRangeStr.includes(' to ')) {
+        const parts = dateRangeStr.split(' to ');
+        const parseDate = (d) => {
+            const [day, month, year] = d.split('/');
+            return `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+        };
+        checkin = parseDate(parts[0]);
+        checkout = parseDate(parts[1]);
+    }
+
+    const totalGuests = guestCounts.adults + guestCounts.children;
+
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/rooms?username=${username}`);
-        let allRooms = await response.json();
-        
-        if (selectedType !== 'all') {
-            allRooms = allRooms.filter(r => r.name === selectedType);
-        }
-        
-        if (priceRange !== '0-999999999') {
-            allRooms = allRooms.filter(r => r.price >= minPrice && r.price <= maxPrice);
-        }
+        const params = new URLSearchParams({
+            checkin: checkin || '',
+            checkout: checkout || '',
+            guests: totalGuests,
+            room_type: selectedType,
+            min_price: priceRange !== '0-999999999' ? minPrice : 0,
+            max_price: priceRange !== '0-999999999' ? maxPrice : 999999999,
+            username
+        });
+        const response = await fetch(`http://127.0.0.1:8000/api/rooms/search?${params}`);
+        const allRooms = await response.json();
         
         renderRooms(allRooms);
         document.querySelector('.room-section').scrollIntoView({ behavior: 'smooth' });
     } catch (error) { 
-        showToast("Lỗi kết nối bộ lọc Backend", "error"); 
+        showToast("Có lỗi xảy ra khi tải danh sách phòng.", "error"); 
+        console.error(error);
     }
 }
 
@@ -659,9 +792,12 @@ async function attemptToBook(roomId, roomName, price) {
     ciInput.value = '';
     coInput.value = '';
     document.getElementById('booking-nights-badge').innerText = '0 đêm';
-    document.getElementById('invoice-nights').innerText = '0 đêm';
+    document.getElementById('invoice-nights').innerText = '0';
     updateBookingTotal();
     
+    // reset flatpickr instances to empty if needed
+    if(window.bookingCheckinPicker) window.bookingCheckinPicker.clear();
+    if(window.bookingCheckoutPicker) window.bookingCheckoutPicker.clear();
     let disabledDates = [];
     try {
         const res = await fetch(`http://127.0.0.1:8000/api/rooms/${roomId}/booked-dates`);
@@ -674,8 +810,9 @@ async function attemptToBook(roomId, roomName, price) {
         dateFormat: "Y-m-d",
         onChange: function() { recalculateBooking(); }
     });
+    window.bookingCheckoutPicker = checkoutPicker;
 
-    flatpickr("#booking-checkin-input", {
+    const checkinPicker = flatpickr("#booking-checkin-input", {
         minDate: "today",
         disable: disabledDates,
         dateFormat: "Y-m-d",
@@ -688,6 +825,7 @@ async function attemptToBook(roomId, roomName, price) {
             recalculateBooking();
         }
     });
+    window.bookingCheckinPicker = checkinPicker;
     
     const sList = document.getElementById('booking-services-list'); 
     sList.innerHTML = '<p style="font-size:13px; color:#666;">Đang tải danh sách dịch vụ...</p>';
@@ -698,11 +836,14 @@ async function attemptToBook(roomId, roomName, price) {
         activeServices.forEach(s => {
             sList.innerHTML += `
                 <label class="service-item-card">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <input type="checkbox" class="booking-service-cb" value="${s.price}" data-name="${s.name}" onchange="updateBookingTotal()">
-                        <span class="svc-name">${s.name}</span>
+                    <input type="checkbox" class="booking-service-cb hidden-cb" value="${s.price}" data-name="${s.name}" onchange="updateBookingTotal()">
+                    <div class="svc-card-content">
+                        <div class="svc-left">
+                            <div class="svc-checkbox-custom"></div>
+                            <span class="svc-name">${s.name}</span>
+                        </div>
+                        <span class="svc-price">+${s.price.toLocaleString('vi-VN')} đ</span>
                     </div>
-                    <span class="svc-price">+${s.price.toLocaleString('vi-VN')} đ</span>
                 </label>
             `;
         });
@@ -720,7 +861,7 @@ function recalculateBooking() {
 
     if(coDate <= ciDate) {
         coDate = new Date(ciDate.getTime() + 24 * 60 * 60 * 1000);
-        const formatForInput = (d) => { return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getDate().toString().padStart(2, '0') + 'T' + d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0'); };
+        const formatForInput = (d) => { return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getDate().toString().padStart(2, '0'); };
         document.getElementById('booking-checkout-input').value = formatForInput(coDate);
     }
 
@@ -731,8 +872,9 @@ function recalculateBooking() {
     bookingNights = calculatedNights;
 
     let timeText = diffHours < 24 ? `${diffHours} giờ` : `${bookingNights} đêm`;
+    let invoiceText = diffHours < 24 ? diffHours : bookingNights;
     document.getElementById('booking-nights-badge').innerText = timeText;
-    document.getElementById('invoice-nights').innerText = timeText;
+    document.getElementById('invoice-nights').innerText = invoiceText;
 
     updateBookingTotal();
 }
@@ -757,11 +899,11 @@ async function submitBooking() {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bookingData)
         });
         if (response.ok) {
-            showToast(`Tuyệt vời! Đơn đã lưu vào CSDL.`, "success"); 
+            showToast(`Đặt phòng thành công! Cảm ơn quý khách đã tin tưởng HUCE Hotel.`, "success"); 
             closeBookingModal(); 
             renderRooms(); 
-        } else { showToast("Lỗi đặt phòng trên Server SQL!", "error"); }
-    } catch (e) { showToast("Không kết nối được Backend!", "error"); }
+        } else { showToast("Có lỗi xảy ra trong quá trình xử lý đặt phòng. Vui lòng thử lại.", "error"); }
+    } catch (e) { showToast("Hệ thống đang bận. Vui lòng thử lại sau.", "error"); }
 }
 
 function updateBookingTotal() {
@@ -774,7 +916,16 @@ function updateBookingTotal() {
     });
     document.getElementById('booking-services-total-price').innerText = servicesTotal.toLocaleString('vi-VN') + ' đ';
     
-    let grandTotal = roomTotal + servicesTotal;
+    let subTotal = roomTotal + servicesTotal;
+    let vatPercent = window.globalVat || 0;
+    let vatAmount = Math.round(subTotal * (vatPercent / 100));
+    
+    const vatPercentEl = document.getElementById('booking-vat-percent');
+    if (vatPercentEl) vatPercentEl.innerText = vatPercent;
+    const vatPriceEl = document.getElementById('booking-vat-price');
+    if (vatPriceEl) vatPriceEl.innerText = '+' + vatAmount.toLocaleString('vi-VN') + ' đ';
+    
+    let grandTotal = subTotal + vatAmount;
     document.getElementById('booking-total-price').innerText = grandTotal.toLocaleString('vi-VN') + ' VND';
 }
 
@@ -786,8 +937,16 @@ function switchProfileTab(tabName) {
     document.getElementById(`tab-menu-${tabName}`).classList.add('active');
     document.getElementById(`tab-content-${tabName}`).style.display = 'block';
     
+    if (window.customerHistoryPolling) {
+        clearInterval(window.customerHistoryPolling);
+        window.customerHistoryPolling = null;
+    }
+    
     if (tabName === 'info') loadProfileData();
-    if (tabName === 'history') loadBookingHistory();
+    if (tabName === 'history') {
+        loadBookingHistory(false);
+        window.customerHistoryPolling = setInterval(() => loadBookingHistory(true), 5000);
+    }
     if (tabName === 'services') loadUsedServices();
 }
 
@@ -803,7 +962,7 @@ async function loadProfileData() {
         document.getElementById('prof-phone').value = user.phone;
         document.getElementById('prof-idcard').value = user.idcard;
         document.getElementById('prof-address').value = user.address;
-    } catch(e) { showToast("Lỗi nạp Profile!", "error"); }
+    } catch(e) { showToast("Không thể tải thông tin hồ sơ.", "error"); }
 }
 
 async function updateProfile() {
@@ -820,22 +979,29 @@ async function updateProfile() {
         });
         if(response.ok) {
             localStorage.setItem('current_user', data.fullname); updateHeaderUI();
-            showToast("Bảng KhachHang trong SQL Server đã cập nhật!", "success");
+            showToast("Cập nhật thông tin cá nhân thành công.", "success");
         }
     } catch(e) { showToast("Lỗi kết nối", "error"); }
 }
 
-async function loadBookingHistory() {
+async function loadBookingHistory(isPolling = false) {
     let username = localStorage.getItem('current_username');
-    const tbody = document.getElementById('history-tbody'); tbody.innerHTML = 'Đang truy vấn...';
+    const tbody = document.getElementById('history-tbody'); 
+    if (!isPolling) tbody.innerHTML = 'Đang truy vấn...';
     try {
         const res = await fetch(`http://127.0.0.1:8000/api/profile/history?username=${username}`);
-        const history = await res.json(); tbody.innerHTML = '';
-        if(history.length === 0) return tbody.innerHTML = `<tr><td colspan="5">Chưa có đơn đặt phòng nào.</td></tr>`;
-        history.forEach(b => {
-            tbody.innerHTML += `<tr><td><strong>${b.id}</strong></td><td>${b.roomName}</td><td>${b.checkin} - ${b.checkout}</td><td><span class="badge confirmed">${b.status}</span></td><td>${b.totalPrice.toLocaleString()}đ</td></tr>`;
-        });
-    } catch(e) { tbody.innerHTML = 'Lỗi kết nối.'; }
+        const history = await res.json(); 
+        
+        let newHTML = '';
+        if(history.length === 0) newHTML = `<tr><td colspan="5">Chưa có đơn đặt phòng nào.</td></tr>`;
+        else {
+            history.forEach(b => {
+                newHTML += `<tr><td><strong>${b.id}</strong></td><td>${b.roomName}</td><td>${b.checkin} - ${b.checkout}</td><td><span class="badge confirmed">${b.status}</span></td><td>${b.totalPrice.toLocaleString()}đ</td></tr>`;
+            });
+        }
+        
+        if (tbody.innerHTML !== newHTML) tbody.innerHTML = newHTML;
+    } catch(e) { if (!isPolling) tbody.innerHTML = 'Lỗi kết nối.'; }
 }
 
 async function loadUsedServices() {
@@ -874,7 +1040,7 @@ async function changePassword() {
         });
         
         if (res.ok) {
-            showToast("Đổi mật khẩu thành công! Cơ sở dữ liệu đã được cập nhật.", "success");
+            showToast("Đổi mật khẩu thành công.", "success");
             document.getElementById('old-password').value = '';
             document.getElementById('new-password').value = '';
             document.getElementById('confirm-new-password').value = '';
@@ -883,10 +1049,10 @@ async function changePassword() {
             showToast(err.detail, "error");
         }
     } catch (e) {
-        showToast("Lỗi kết nối máy chủ API!", "error");
+        showToast("Hệ thống đang bận. Vui lòng thử lại sau.", "error");
     }
 }
-function resetData() { localStorage.clear(); initData(); showHomePage(); showToast("Đã làm sạch dữ liệu phiên duyệt web!", "info"); }
+function resetData() { localStorage.clear(); initData(); showHomePage(); showToast("Dữ liệu phiên duyệt web đã được làm sạch.", "info"); }
 
 function showAdminPage() {
     hideAllScreens();
@@ -978,7 +1144,7 @@ async function mockUpdateStatus(roomId) {
     try {
         const res = await fetch(`http://127.0.0.1:8000/api/admin/rooms/status/${roomId}`, { method: 'POST' });
         if (res.ok) { 
-            showToast("Bảng Phong trong CSDL đã chuyển trạng thái!", "success"); 
+            showToast("Cập nhật trạng thái phòng thành công.", "success"); 
             renderAdminRooms(); 
             
             localStorage.setItem('sync_trigger', Date.now());
@@ -1176,7 +1342,7 @@ async function saveAdminSettings() {
         });
         if(res.ok) {
             document.querySelectorAll('.hotel-name-display').forEach(el => el.innerText = data.name);
-            showToast("Bảng KhachSan trong SQL Server đã được cập nhật thành công!", "success");
+            showToast("Lưu cấu hình hệ thống thành công.", "success");
             
             localStorage.setItem('sync_trigger', Date.now());
         }
@@ -1257,6 +1423,8 @@ function initHeroSpotlight() {
 function initHeroParallax() {
     const hero = document.getElementById('hero-banner');
     if (!hero) return;
+    
+    // Scroll Parallax
     let ticking = false;
     window.addEventListener('scroll', () => {
         if (ticking) return;
@@ -1269,6 +1437,29 @@ function initHeroParallax() {
             ticking = false;
         });
     }, { passive: true });
+
+    // 3D Tilt Effect on mousemove
+    const inner = hero.querySelector('.hero-inner');
+    if (inner) {
+        hero.addEventListener('mousemove', (e) => {
+            const rect = hero.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -12; // Max 12 deg tilt
+            const rotateY = ((x - centerX) / centerX) * 12;
+            
+            inner.style.transition = 'none'; // remove transition for smooth tracking
+            inner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+        
+        hero.addEventListener('mouseleave', () => {
+            inner.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+            inner.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+        });
+    }
 }
 
 function initCountUp() {
@@ -1344,15 +1535,83 @@ function initHomeAnimations() {
     initHeroParticles();
     initHeroSpotlight();
     initHeroParallax();
-    initCountUp();
     initScrollReveal();
     addRippleEffect();
 }
 
+let guestCounts = { adults: 1, children: 0 };
+
+function initSearchFields() {
+    if (document.getElementById('search-date-range')) {
+        flatpickr("#search-date-range", {
+            mode: "range",
+            dateFormat: "d/m/Y",
+            minDate: "today",
+            static: true,
+            monthSelectorType: "static"
+        });
+    }
+
+    const guestInput = document.getElementById('search-guests-display');
+    const guestPopover = document.getElementById('guest-popover');
+    
+    if (guestInput && guestPopover) {
+        guestInput.addEventListener('click', (e) => {
+            e.stopPropagation();
+            guestPopover.classList.toggle('show');
+        });
+        guestPopover.addEventListener('click', (e) => e.stopPropagation());
+        document.addEventListener('click', () => {
+            guestPopover.classList.remove('show');
+        });
+
+        function updateGuestDisplay() {
+            document.getElementById('adult-count').textContent = guestCounts.adults;
+            document.getElementById('child-count').textContent = guestCounts.children;
+            let text = `${guestCounts.adults} Người lớn`;
+            if (guestCounts.children > 0) text += `, ${guestCounts.children} Trẻ em`;
+            guestInput.value = text;
+        }
+
+        document.getElementById('adult-minus').addEventListener('click', () => {
+            if (guestCounts.adults > 1) { guestCounts.adults--; updateGuestDisplay(); }
+        });
+        document.getElementById('adult-plus').addEventListener('click', () => {
+            if (guestCounts.adults < 10) { guestCounts.adults++; updateGuestDisplay(); }
+        });
+        document.getElementById('child-minus').addEventListener('click', () => {
+            if (guestCounts.children > 0) { guestCounts.children--; updateGuestDisplay(); }
+        });
+        document.getElementById('child-plus').addEventListener('click', () => {
+            if (guestCounts.children < 10) { guestCounts.children++; updateGuestDisplay(); }
+        });
+    }
+}
+
+function initSearchChoices() {
+    const typeEl = document.getElementById('room-type-search');
+    const priceEl = document.getElementById('room-price-search');
+    
+    if (typeEl && !typeEl.dataset.choicesInit) {
+        new Choices(typeEl, { searchEnabled: false, itemSelectText: '', shouldSort: false, position: 'top' });
+        typeEl.dataset.choicesInit = 'true';
+    }
+    if (priceEl && !priceEl.dataset.choicesInit) {
+        new Choices(priceEl, { searchEnabled: false, itemSelectText: '', shouldSort: false, position: 'top' });
+        priceEl.dataset.choicesInit = 'true';
+    }
+}
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initHomeAnimations);
+    document.addEventListener('DOMContentLoaded', () => {
+        initHomeAnimations();
+        initSearchChoices();
+        initSearchFields();
+    });
 } else {
     initHomeAnimations();
+    initSearchChoices();
+    initSearchFields();
 }
 
 initData(); 
@@ -1399,7 +1658,6 @@ window.addEventListener('load', function() {
     (function() {
         const searchBar = document.getElementById('search-bar');
         const roomAnchor = document.getElementById('room-anchor');
-        const toggleBtn = document.getElementById('search-bar-toggle-btn');
         if (!searchBar || !roomAnchor) return;
 
         let lastScrollY = window.scrollY;
@@ -1409,7 +1667,6 @@ window.addEventListener('load', function() {
 
         function setHidden(hidden) {
             searchBar.classList.toggle('search-bar-hidden', hidden);
-            if (toggleBtn) toggleBtn.classList.toggle('show-toggle', hidden);
         }
 
         function onScroll() {
