@@ -116,7 +116,7 @@ async function renderAdminRooms(customData = null) {
         // Ưu tiên dùng dữ liệu tìm kiếm nếu có
         let rooms = customData;
         if (!rooms) {
-            const res = await fetch('http://127.0.0.1:8000/api/admin/rooms');
+            const res = await fetch('/api/admin/rooms');
             rooms = await res.json(); 
         }
         tbody.innerHTML = '';
@@ -176,7 +176,7 @@ async function renderAdminRooms(customData = null) {
 async function searchAdminRooms() {
     let kw = document.getElementById('admin-search-room-input').value.trim();
     try {
-        const res = await fetch(`http://127.0.0.1:8000/api/admin/rooms?keyword=${encodeURIComponent(kw)}`);
+        const res = await fetch(`/api/admin/rooms?keyword=${encodeURIComponent(kw)}`);
         const data = await res.json();
         renderAdminRooms(data); // Cập nhật lại bảng với dữ liệu đã lọc
     } catch(e) { 
@@ -185,7 +185,7 @@ async function searchAdminRooms() {
 }
 async function mockUpdateStatus(roomId) {
     try {
-        const res = await fetch(`http://127.0.0.1:8000/api/admin/rooms/status/${roomId}`, { method: 'POST' });
+        const res = await fetch(`/api/admin/rooms/status/${roomId}`, { method: 'POST' });
         if (res.ok) {
             showToast("Cập nhật trạng thái phòng thành công.", "success");
             renderAdminRooms();
@@ -199,7 +199,7 @@ async function renderAdminRoomTypes(customData = null) {
     try {
         let types = customData;
         if (!types) {
-            const res = await fetch('http://127.0.0.1:8000/api/admin/room-types');
+            const res = await fetch('/api/admin/room-types');
             types = await res.json();
         }
         tbody.innerHTML = '';
@@ -254,7 +254,7 @@ async function renderAdminRoomTypes(customData = null) {
 async function searchAdminRoomTypes() {
     let kw = document.getElementById('admin-search-type-input').value.trim();
     try {
-        const res = await fetch(`http://127.0.0.1:8000/api/admin/room-types?keyword=${encodeURIComponent(kw)}`);
+        const res = await fetch(`/api/admin/room-types?keyword=${encodeURIComponent(kw)}`);
         const data = await res.json(); renderAdminRoomTypes(data);
     } catch(e) { showToast("Có lỗi xảy ra khi tìm kiếm.", "error"); }
 }
@@ -264,7 +264,7 @@ async function renderAdminBookings(customData = null, isPolling = false) {
     try {
         let bookings = customData;
         if (!bookings) {
-            const res = await fetch('http://127.0.0.1:8000/api/admin/bookings');
+            const res = await fetch('/api/admin/bookings');
             bookings = await res.json();
         }
         
@@ -285,7 +285,7 @@ async function renderAdminBookings(customData = null, isPolling = false) {
 async function searchAdminBookings() {
     let kw = document.getElementById('admin-search-booking-input').value.trim();
     try {
-        const res = await fetch(`http://127.0.0.1:8000/api/admin/bookings?keyword=${encodeURIComponent(kw)}`);
+        const res = await fetch(`/api/admin/bookings?keyword=${encodeURIComponent(kw)}`);
         const data = await res.json(); renderAdminBookings(data);
     } catch(e) { showToast("Có lỗi xảy ra khi tìm kiếm.", "error"); }
 }
@@ -295,7 +295,7 @@ async function renderAdminServices(customData = null) {
     try {
         let services = customData;
         if (!services) {
-            const res = await fetch('http://127.0.0.1:8000/api/admin/services');
+            const res = await fetch('/api/admin/services');
             services = await res.json();
         }
         tbody.innerHTML = '';
@@ -351,13 +351,13 @@ async function renderAdminServices(customData = null) {
 async function searchAdminServices() {
     let kw = document.getElementById('admin-search-service-input').value.trim();
     try {
-        const res = await fetch(`http://127.0.0.1:8000/api/admin/services?keyword=${encodeURIComponent(kw)}`);
+        const res = await fetch(`/api/admin/services?keyword=${encodeURIComponent(kw)}`);
         const data = await res.json(); renderAdminServices(data);
     } catch(e) { showToast("Có lỗi xảy ra khi tìm kiếm.", "error"); }
 }
 async function renderAdminSettings() {
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/admin/settings');
+        const res = await fetch('/api/admin/settings');
         const settings = await res.json();
         document.getElementById('set-hotel-name').value = settings.name;
         document.getElementById('set-hotel-phone').value = settings.phone;
@@ -377,7 +377,7 @@ async function saveAdminSettings() {
         vat: parseInt(document.getElementById('set-vat').value)
     };
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/admin/settings', {
+        const res = await fetch('/api/admin/settings', {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
         });
         if(res.ok) {
@@ -408,7 +408,7 @@ async function loadRoomTypeOptions(selectId, selectedValue) {
     const sel = document.getElementById(selectId);
     sel.innerHTML = '<option value="">-- Đang tải... --</option>';
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/admin/room-types');
+        const res = await fetch('/api/admin/room-types');
         const types = await res.json();
         sel.innerHTML = '<option value="">-- Chọn loại phòng --</option>';
         types.forEach(t => {
@@ -430,7 +430,7 @@ async function saveRoom() {
     if (!maLoai) { showToast('Vui lòng chọn loại phòng!', 'error'); return; }
 
     const body = { so_phong: soPhong, ma_loai_phong: maLoai, tinh_trang: tinhTrang };
-    const url = id ? `http://127.0.0.1:8000/api/admin/rooms/${id}` : 'http://127.0.0.1:8000/api/admin/rooms';
+    const url = id ? `/api/admin/rooms/${id}` : '/api/admin/rooms';
     const method = id ? 'PUT' : 'POST';
 
     try {
@@ -450,7 +450,7 @@ function deleteRoom(roomId, soPhong) {
     document.getElementById('modal-delete-msg').textContent = `Bạn có chắc muốn xóa phòng số ${soPhong} (${roomId})? Hành động này không thể hoàn tác.`;
     document.getElementById('modal-delete-confirm-btn').onclick = async () => {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/admin/rooms/${roomId}`, { method: 'DELETE' });
+            const res = await fetch(`/api/admin/rooms/${roomId}`, { method: 'DELETE' });
             if (res.ok) {
                 closeAdminModal('modal-confirm-delete');
                 renderAdminRooms();
@@ -497,7 +497,7 @@ async function saveRoomType() {
     if (!gia || gia <= 0) { showToast('Vui lòng nhập giá tiền hợp lệ!', 'error'); return; }
 
     const body = { ten_loai_phong: ten, mo_ta: moTa, so_giuong: soGiuong, so_luong_nguoi: soNguoi, gia_tien: gia };
-    const url = id ? `http://127.0.0.1:8000/api/admin/room-types/${id}` : 'http://127.0.0.1:8000/api/admin/room-types';
+    const url = id ? `/api/admin/room-types/${id}` : '/api/admin/room-types';
     const method = id ? 'PUT' : 'POST';
 
     try {
@@ -517,7 +517,7 @@ function deleteRoomType(id, ten) {
     document.getElementById('modal-delete-msg').textContent = `Bạn có chắc muốn xóa loại phòng "${ten}" (${id})? Chỉ xóa được nếu không có phòng nào thuộc loại này.`;
     document.getElementById('modal-delete-confirm-btn').onclick = async () => {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/admin/room-types/${id}`, { method: 'DELETE' });
+            const res = await fetch(`/api/admin/room-types/${id}`, { method: 'DELETE' });
             if (res.ok) {
                 closeAdminModal('modal-confirm-delete');
                 renderAdminRoomTypes();
@@ -555,7 +555,7 @@ async function saveService() {
     if (!gia || gia <= 0) { showToast('Vui lòng nhập giá hợp lệ!', 'error'); return; }
 
     const body = { ten_dv: ten, gia_dv: gia };
-    const url = id ? `http://127.0.0.1:8000/api/admin/services/${id}` : 'http://127.0.0.1:8000/api/admin/services';
+    const url = id ? `/api/admin/services/${id}` : '/api/admin/services';
     const method = id ? 'PUT' : 'POST';
 
     try {
@@ -575,7 +575,7 @@ function deleteService(id, ten) {
     document.getElementById('modal-delete-msg').textContent = `Bạn có chắc muốn xóa dịch vụ "${ten}" (${id})?`;
     document.getElementById('modal-delete-confirm-btn').onclick = async () => {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/admin/services/${id}`, { method: 'DELETE' });
+            const res = await fetch(`/api/admin/services/${id}`, { method: 'DELETE' });
             if (res.ok) {
                 closeAdminModal('modal-confirm-delete');
                 renderAdminServices();
@@ -608,11 +608,11 @@ async function openAddBookingModal() {
     sel.innerHTML = '<option value="">-- Đang tải phòng trống... --</option>';
     
     try {
-        const settingsRes = await fetch('http://127.0.0.1:8000/api/admin/settings');
+        const settingsRes = await fetch('/api/admin/settings');
         const settings = await settingsRes.json();
         window.adminVatPercent = settings.vat || 0;
 
-        const res = await fetch('http://127.0.0.1:8000/api/admin/rooms');
+        const res = await fetch('/api/admin/rooms');
         const rooms = await res.json();
         const availableRooms = rooms.filter(r => r.status === 'Sẵn sàng' || r.status === 'S\u1eb5n s\u00e0ng');
         
@@ -625,7 +625,7 @@ async function openAddBookingModal() {
             sel.appendChild(opt);
         });
         
-        const svcRes = await fetch('http://127.0.0.1:8000/api/admin/services');
+        const svcRes = await fetch('/api/admin/services');
         const svcs = await svcRes.json();
         const svcList = document.getElementById('booking-services-list');
         svcList.innerHTML = '';
@@ -705,7 +705,7 @@ async function saveBookingAdmin() {
     };
 
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/admin/bookings/create', { 
+        const res = await fetch('/api/admin/bookings/create', { 
             method: 'POST', 
             headers: {'Content-Type': 'application/json'}, 
             body: JSON.stringify(body) 
@@ -732,7 +732,7 @@ async function loadRoomMatrix() {
     
     container.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">Đang tải sơ đồ lịch phòng...</div>';
     try {
-        const res = await fetch(`http://127.0.0.1:8000/api/admin/room-matrix?days=${days}`);
+        const res = await fetch(`/api/admin/room-matrix?days=${days}`);
         const data = await res.json();
         
         if (!data.rooms || data.rooms.length === 0) {
@@ -772,7 +772,7 @@ async function loadRoomMatrix() {
 // INVOICE PRINTING
 async function openInvoiceModal(bookingId) {
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/admin/bookings');
+        const res = await fetch('/api/admin/bookings');
         const bookings = await res.json();
         const b = bookings.find(item => item.id === bookingId);
         
@@ -817,7 +817,7 @@ async function openInvoiceModal(bookingId) {
 // EXPORT BOOKINGS TO CSV
 async function exportBookingsCSV() {
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/admin/bookings');
+        const res = await fetch('/api/admin/bookings');
         const bookings = await res.json();
         
         if (!bookings || bookings.length === 0) {
