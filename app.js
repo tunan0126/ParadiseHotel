@@ -45,26 +45,25 @@ function initData() {
             { id: 2, customerName: 'Lê Văn C', date: '15/06/2026', stars: 4, content: 'Trải nghiệm tuyệt vời. Tiện ích đầy đủ, đưa đón sân bay đúng giờ.', image: 'https://images.unsplash.com/photo-1540518614846-7eded433c457?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }
         ]));
     }
-    fetch('/api/admin/settings')
+    fetch('/api/init')
         .then(res => res.json())
         .then(data => {
-            document.querySelectorAll('.hotel-name-display').forEach(el => el.innerText = data.name);
-            window.globalVat = data.vat || 0;
-        }).catch(() => { window.globalVat = 0; });
-
-    Promise.all([
-        fetch('/api/rooms').then(res => res.ok ? res.json() : []),
-        fetch('/api/admin/services').then(res => res.ok ? res.json() : [])
-    ]).then(([rooms, services]) => {
-        const roomStat = document.getElementById('stat-rooms-count');
-        const serviceStat = document.getElementById('stat-services-count');
-        if (roomStat && rooms.length) roomStat.dataset.target = rooms.length;
-        if (serviceStat && services.length) serviceStat.dataset.target = services.length;
-        initCountUp();
-    }).catch(e => {
-        console.error("Error fetching real time stats", e);
-        initCountUp();
-    });
+            if(data.settings) {
+                document.querySelectorAll('.hotel-name-display').forEach(el => el.innerText = data.settings.name);
+                window.globalVat = data.settings.vat || 0;
+            }
+            if(data.rooms && data.services) {
+                const roomStat = document.getElementById('stat-rooms-count');
+                const serviceStat = document.getElementById('stat-services-count');
+                if (roomStat && data.rooms.length) roomStat.dataset.target = data.rooms.length;
+                if (serviceStat && data.services.length) serviceStat.dataset.target = data.services.length;
+                initCountUp();
+            }
+        }).catch(e => {
+            console.error("Error fetching init data", e);
+            window.globalVat = 0;
+            initCountUp();
+        });
 }
 
 async function login() {

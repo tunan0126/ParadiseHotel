@@ -28,37 +28,39 @@ async def get_rooms(username: str = ""):
     }).sort([("_id", -1)])
     bookings_data = await bookings_cursor.to_list(length=None)
     
+    # Optimize: Build set of unavailable rooms in O(M) time
+    unavailable_rooms = set()
+    room_booking_info = {}
+    for b in bookings_data:
+        b_start = b.get("NgayDat")
+        b_end = b.get("NgayTra")
+        
+        if isinstance(b_start, str):
+            try: b_start = datetime.datetime.fromisoformat(b_start)
+            except: pass
+        if isinstance(b_end, str):
+            try: b_end = datetime.datetime.fromisoformat(b_end)
+            except: pass
+            
+        if b_start and b_end:
+            if b_start < co_date and b_end > ci_date:
+                for rid in b.get("Phong", []):
+                    unavailable_rooms.add(rid)
+                    if rid not in room_booking_info:
+                        room_booking_info[rid] = {
+                            "nguoi_dat": b.get("MaKH"),
+                            "ngay_tra": b_end.isoformat() if isinstance(b_end, datetime.datetime) else b_end
+                        }
+
     rooms = []
     for r in rooms_data:
         room_id = r["_id"]
         rt = room_types_data.get(r["MaLoaiPhong"], {})
         
-        # Determine if booked
-        is_available = True
-        nguoi_dat = None
-        ngay_tra = None
-        
-        for b in bookings_data:
-            if room_id in b.get("Phong", []):
-                b_start = b.get("NgayDat")
-                b_end = b.get("NgayTra")
-                
-                if isinstance(b_start, str):
-                    try: b_start = datetime.datetime.fromisoformat(b_start)
-                    except: pass
-                if isinstance(b_end, str):
-                    try: b_end = datetime.datetime.fromisoformat(b_end)
-                    except: pass
-                
-                if b_start and b_end:
-                    # Check overlap
-                    if b_start < co_date and b_end > ci_date:
-                        is_available = False
-                        
-                if not nguoi_dat:
-                    nguoi_dat = b.get("MaKH")
-                if not ngay_tra:
-                    ngay_tra = b_end
+        is_available = room_id not in unavailable_rooms
+        info = room_booking_info.get(room_id, {})
+        nguoi_dat = info.get("nguoi_dat")
+        ngay_tra = info.get("ngay_tra")
                     
         if r.get("TinhTrang") != 'Sẵn sàng':
             is_available = False

@@ -12,6 +12,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/api/init")
+async def get_init():
+    try:
+        from routers.rooms import get_rooms
+        from routers.admin import admin_get_settings, admin_get_services
+        
+        rooms_data = await get_rooms()
+        settings_data = await admin_get_settings()
+        services_data = await admin_get_services()
+        
+        return {
+            "rooms": rooms_data,
+            "settings": settings_data,
+            "services": services_data
+        }
+    except Exception as e:
+        return {"rooms": [], "settings": {}, "services": []}
+
 app.include_router(auth.router)
 app.include_router(rooms.router)
 app.include_router(bookings.router)
