@@ -233,10 +233,10 @@ function showServicePage() {
 }
 function showProfilePage() { if (localStorage.getItem('is_logged_in') !== 'true') return openLoginModal(); hideAllScreens(); document.getElementById('customer-view').style.display = 'block'; document.getElementById('profile-screen').style.display = 'block'; switchProfileTab('info'); }
 
-function openLoginModal() { const rm = document.getElementById('register-modal'); if(rm.open) rm.close(); document.getElementById('login-modal').showModal(); }
-function closeLoginModal() { document.getElementById('login-modal').close(); }
-function openRegisterModal() { const lm = document.getElementById('login-modal'); if(lm.open) lm.close(); document.getElementById('register-modal').showModal(); }
-function closeRegisterModal() { document.getElementById('register-modal').close(); }
+function openLoginModal() { document.getElementById('login-modal').style.display = 'flex'; document.getElementById('register-modal').style.display = 'none'; }
+function closeLoginModal() { document.getElementById('login-modal').style.display = 'none'; }
+function openRegisterModal() { document.getElementById('register-modal').style.display = 'flex'; document.getElementById('login-modal').style.display = 'none'; }
+function closeRegisterModal() { document.getElementById('register-modal').style.display = 'none'; }
 function switchToRegister() { openRegisterModal(); }
 function switchToLogin() { openLoginModal(); }
 
