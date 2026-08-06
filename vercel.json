@@ -1,0 +1,55 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "main.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "images/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "main.py"
+    },
+    {
+      "src": "/auth/(.*)",
+      "dest": "main.py"
+    },
+    {
+      "src": "/rooms/(.*)",
+      "dest": "main.py"
+    },
+    {
+      "src": "/bookings/(.*)",
+      "dest": "main.py"
+    },
+    {
+      "src": "/reviews/(.*)",
+      "dest": "main.py"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "main.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

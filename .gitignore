@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.db
+*.bak
+brain/
+.vscode/
+node_modules/

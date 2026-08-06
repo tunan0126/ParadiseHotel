@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paradise - Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <main id="admin-screen" class="admin-layout">
+        <aside class="admin-sidebar-nav">
+            <h2 class="admin-logo-text">ADMIN PANEL</h2>
+            <ul class="admin-nav-menu">
+                <li id="nav-admin-rooms" class="active"><a href="#" onclick="switchAdminTab('rooms')">Quản lý Phòng</a></li>
+                <li id="nav-admin-matrix"><a href="#" onclick="switchAdminTab('matrix')">Sơ đồ Lịch Phòng</a></li>
+                <li id="nav-admin-room-types"><a href="#" onclick="switchAdminTab('room-types')">Quản lý Loại phòng</a></li>
+                <li id="nav-admin-bookings"><a href="#" onclick="switchAdminTab('bookings')">Quản lý Đặt phòng</a></li>
+                <li id="nav-admin-services"><a href="#" onclick="switchAdminTab('services')">Quản lý Dịch vụ</a></li>
+                <li id="nav-admin-settings"><a href="#" onclick="switchAdminTab('settings')">Cài đặt hệ thống</a></li>
+            </ul>
+            <button class="admin-logout-btn" onclick="logoutAdmin()">Đăng xuất</button>
+        </aside>
+        
+
+        <section class="admin-main-content">
+            <div id="admin-tab-rooms" class="admin-tab-content">
+                <div class="admin-page-header">
+                    <div>
+                        <h3 class="admin-page-title">Quản lý Danh sách Phòng</h3>
+                        <p class="admin-page-subtitle">Theo dõi tình trạng và quản lý toàn bộ phòng của khách sạn</p>
+                    </div>
+                    <button class="btn-add-room" onclick="addRoom()">+ Thêm phòng mới</button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="admin-stats-row">
+                    <div class="admin-stat-card">
+                        <div class="stat-number" id="stat-total-rooms">0</div>
+                        <div class="stat-label">TỔNG SỐ PHÒNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number green" id="stat-ready-rooms">0</div>
+                        <div class="stat-label">SẴN SÀNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number orange" id="stat-occupied-rooms">0</div>
+                        <div class="stat-label">ĐANG CÓ KHÁCH</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number red" id="stat-cleaning-rooms">0</div>
+                        <div class="stat-label">ĐANG DỌN DẸP</div>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="admin-search-wrap">
+                    <div class="admin-search-input-wrap">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="admin-search-room-input" placeholder="Tìm theo mã phòng hoặc số phòng..." oninput="searchAdminRooms()">
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-data-table">
+                        <thead><tr><th>PHÒNG</th><th>GIÁ / ĐÊM</th><th>TÌNH TRẠNG</th><th>THAO TÁC</th></tr></thead>
+                        <tbody id="admin-rooms-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-room-types" class="admin-tab-content" style="display: none;">
+                <div class="admin-page-header">
+                    <div>
+                        <h3 class="admin-page-title">Quản lý Loại phòng</h3>
+                        <p class="admin-page-subtitle">Cấu hình các loại phòng và mức giá áp dụng</p>
+                    </div>
+                    <button class="btn-add-room" onclick="addRoomType()">+ Thêm loại phòng mới</button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="admin-stats-row">
+                    <div class="admin-stat-card">
+                        <div class="stat-number" id="stat-total-types">0</div>
+                        <div class="stat-label">TỔNG LOẠI PHÒNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number green" id="stat-active-types">0</div>
+                        <div class="stat-label">ĐANG HOẠT ĐỘNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number orange" id="stat-min-price">0</div>
+                        <div class="stat-label">GIÁ THẤP NHẤT</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number" id="stat-max-price">0</div>
+                        <div class="stat-label">GIÁ CAO NHẤT</div>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="admin-search-wrap">
+                    <div class="admin-search-input-wrap">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="admin-search-type-input" placeholder="Tìm theo tên loại phòng..." oninput="searchAdminRoomTypes()">
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-data-table">
+                        <thead><tr><th>LOẠI PHÒNG</th><th>SỐ GIƯỜNG</th><th>SỐ NGƯỜI TỐI ĐA</th><th>ĐƠN GIÁ</th><th>THAO TÁC</th></tr></thead>
+                        <tbody id="admin-room-types-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-bookings" class="admin-tab-content" style="display: none;">
+                <div class="admin-header-bar">
+                    <h3>Hệ thống Đặt phòng</h3>
+                    <div>
+                        <button class="btn-add-room" style="background:#0284c7; margin-right:8px;" onclick="exportBookingsCSV()">📥 Xuất Excel (CSV)</button>
+                        <button class="btn-add-room" onclick="openAddBookingModal()">+ Tạo đơn mới</button>
+                    </div>
+                </div>
+                
+                <div class="admin-search-bar"><input type="text" id="admin-search-booking-input" placeholder="Tìm mã đơn, tên khách..."><button class="admin-search-btn" onclick="searchAdminBookings()">Tìm</button></div>
+                <div class="admin-table-container">
+                    <table class="admin-data-table">
+                        <thead><tr><th>MÃ ĐƠN</th><th>KHÁCH HÀNG</th><th>THỜI GIAN</th><th>TỔNG TIỀN</th><th>TRẠNG THÁI</th><th>THAO TÁC</th></tr></thead>
+                        <tbody id="admin-bookings-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-services" class="admin-tab-content" style="display: none;">
+                <div class="admin-page-header">
+                    <div>
+                        <h3 class="admin-page-title">Quản lý Dịch vụ</h3>
+                        <p class="admin-page-subtitle">Quản lý các dịch vụ tiện ích và phụ trợ của khách sạn</p>
+                    </div>
+                    <button class="btn-add-room" onclick="addService()">+ Thêm dịch vụ mới</button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="admin-stats-row">
+                    <div class="admin-stat-card">
+                        <div class="stat-number" id="stat-total-services">0</div>
+                        <div class="stat-label">TỔNG DỊCH VỤ</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number green" id="stat-active-services">0</div>
+                        <div class="stat-label">ĐANG HOẠT ĐỘNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number orange" id="stat-inactive-services">0</div>
+                        <div class="stat-label">TẠM DỪNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number" id="stat-service-categories">0</div>
+                        <div class="stat-label">DANH MỤC</div>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="admin-search-wrap">
+                    <div class="admin-search-input-wrap">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="admin-search-service-input" placeholder="Tìm theo tên dịch vụ hoặc danh mục..." oninput="searchAdminServices()">
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-data-table">
+                        <thead><tr><th>DỊCH VỤ</th><th>DANH MỤC</th><th>ĐƠN GIÁ</th><th>TRẠNG THÁI</th><th>THAO TÁC</th></tr></thead>
+                        <tbody id="admin-services-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-matrix" class="admin-tab-content" style="display: none;">
+                <div class="admin-page-header">
+                    <div>
+                        <h3 class="admin-page-title">Sơ đồ Trạng thái Phòng theo Lịch</h3>
+                        <p class="admin-page-subtitle">Theo dõi lịch đặt phòng trực quan theo từng ngày</p>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <select id="matrix-days-select" onchange="loadRoomMatrix()" style="padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1; font-weight:600; cursor:pointer;">
+                            <option value="7">📅 7 Ngày tới</option>
+                            <option value="14">📅 14 Ngày tới</option>
+                            <option value="30">📅 30 Ngày tới</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="matrix-legend" style="display:flex; gap:20px; margin-bottom:15px; font-size:13px; font-weight:600;">
+                    <span style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:50%; background:#10b981;"></span> Sẵn sàng</span>
+                    <span style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:50%; background:#ef4444;"></span> Đang có khách / Đặt</span>
+                    <span style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:50%; background:#f59e0b;"></span> Đang dọn dẹp</span>
+                </div>
+                <div id="admin-room-matrix-container" class="admin-table-container" style="overflow-x:auto;"></div>
+            </div>
+
+            <div id="admin-tab-settings" class="admin-tab-content" style="display: none;">
+                <div class="admin-header-bar"><h3>Cài đặt Hệ thống</h3><button class="btn-add-room" style="background-color: #10b981;" onclick="saveAdminSettings()">Lưu cấu hình</button></div>
+                <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
+                    <div class="profile-form" style="max-width: 800px;">
+                        <h4 style="margin-bottom: 15px; color: #334155; border-bottom: 1px solid #eee; padding: 5px;">Thông tin Cơ bản</h4>
+                        <div class="form-row"><div class="form-group"><label>Tên Khách Sạn</label><input type="text" id="set-hotel-name"></div><div class="form-group"><label>Hotline Hỗ Trợ</label><input type="text" id="set-hotel-phone"></div></div>
+                        <div class="form-group"><label>Địa chỉ</label><input type="text" id="set-hotel-address"></div>
+                        <h4 style="margin-top: 30px; margin-bottom: 15px; color: #334155; border-bottom: 1px solid #eee; padding: 5px;">Chính sách & Quy định</h4>
+                        <div class="form-row"><div class="form-group"><label>Giờ Check-in</label><input type="time" id="set-checkin-time"></div><div class="form-group"><label>Giờ Check-out</label><input type="time" id="set-checkout-time"></div></div>
+                        <div class="form-group"><label>Thuế VAT (%)</label><input type="number" id="set-vat" min="0" max="100" style="width: 150px;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL THANH TOÁN -->
+    <dialog id="modal-payment" class="modern-dialog admin-dialog">
+        <div class="admin-modal-box" style="max-width:540px;">
+            <div class="admin-modal-header">
+                <h3>Thanh toán đặt phòng</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-payment')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <input type="hidden" id="payment-ma-ddp">
+                <div style="background:#f8fafc;border-radius:10px;padding:16px;margin-bottom:4px;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <span style="color:#64748b;font-size:13px;">Mã đơn</span>
+                        <span style="font-weight:700;color:#1e293b;" id="payment-id-display"></span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <span style="color:#64748b;font-size:13px;">Phòng</span>
+                        <span style="font-weight:600;color:#1e293b;" id="payment-room-display"></span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <span style="color:#64748b;font-size:13px;">Ngày nhận → Trả</span>
+                        <span style="font-weight:600;color:#1e293b;" id="payment-dates-display"></span>
+                    </div>
+                    <div style="border-top:1px solid #e2e8f0;margin:10px 0;"></div>
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="color:#64748b;font-size:13px;">Tổng tiền</span>
+                        <span style="font-weight:800;font-size:18px;color:#0ea5e9;" id="payment-total-display"></span>
+                    </div>
+                </div>
+                <div class="admin-form-group" style="margin-top:4px;">
+                    <label>Phương thức thanh toán <span class="required">*</span></label>
+                    <select id="payment-method">
+                        <option value="Tiền mặt">💵 Tiền mặt</option>
+                        <option value="Chuyển khoản">🏦 Chuyển khoản ngân hàng</option>
+                    </select>
+                </div>
+                <div id="payment-bank-info" style="display:none;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;font-size:13px;color:#0369a1;">
+                    <strong>Thông tin chuyển khoản:</strong><br>
+                    Ngân hàng: Vietcombank<br>
+                    Số TK: 1234567890<br>
+                    Chủ TK: Paradise<br>
+                    Nội dung: <span id="payment-bank-content"></span>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-payment')">Hủy</button>
+                <button class="admin-btn-save" onclick="confirmPayment()" style="background:#10b981;">✓ Xác nhận thanh toán</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- MODAL HÓA ĐƠN THANH TOÁN (PRINT INVOICE) -->
+    <dialog id="modal-invoice" class="modern-dialog admin-dialog">
+        <div class="admin-modal-box printable-invoice" style="max-width:600px; padding:30px; background:white;">
+            <div class="no-print" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:15px; margin-bottom:20px;">
+                <h3 style="margin:0; font-size:18px; color:#1e293b;">📄 Hóa Đơn Thanh Toán</h3>
+                <div>
+                    <button onclick="window.print()" style="background:#0284c7; color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer; margin-right:8px;">🖨️ In Hóa Đơn</button>
+                    <button class="admin-modal-close" onclick="closeAdminModal('modal-invoice')">✕</button>
+                </div>
+            </div>
+
+            <div id="invoice-print-area">
+                <div style="text-align:center; margin-bottom:20px;">
+                    <h2 style="margin:0; font-family:'Playfair Display', serif; color:#b8860b; font-size:24px;">HUCE HOTEL & RESORT</h2>
+                    <p style="margin:4px 0; color:#64748b; font-size:12px;">55 Giải Phóng, Hai Bà Trưng, Hà Nội | Hotline: 1900 1234</p>
+                    <h3 style="margin-top:15px; font-size:20px; letter-spacing:1px; color:#1e293b;">HÓA ĐƠN THANH TOÁN</h3>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:15px; color:#475569;">
+                    <div>
+                        <p style="margin:3px 0;"><strong>Mã đơn:</strong> <span id="inv-booking-id">--</span></p>
+                        <p style="margin:3px 0;"><strong>Khách hàng:</strong> <span id="inv-guest-name">--</span></p>
+                    </div>
+                    <div style="text-align:right;">
+                        <p style="margin:3px 0;"><strong>Ngày in:</strong> <span id="inv-print-date">--</span></p>
+                        <p style="margin:3px 0;"><strong>Số phòng:</strong> <span id="inv-room-number">--</span></p>
+                    </div>
+                </div>
+
+                <table style="width:100%; border-collapse:collapse; margin-bottom:20px; font-size:13px;">
+                    <thead>
+                        <tr style="background:#f8fafc; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; text-align:left;">
+                            <th style="padding:10px;">Dịch vụ / Hạng mục</th>
+                            <th style="padding:10px; text-align:center;">SL / Đêm</th>
+                            <th style="padding:10px; text-align:right;">Đơn giá</th>
+                            <th style="padding:10px; text-align:right;">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inv-items-tbody"></tbody>
+                </table>
+
+                <div style="border-top:2px dashed #cbd5e1; padding-top:15px; font-size:14px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px; color:#475569;">
+                        <span>Tạm tính tiền phòng & DV:</span>
+                        <strong id="inv-subtotal">0 đ</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px; color:#475569;">
+                        <span>Thuế VAT (10%):</span>
+                        <strong id="inv-vat">0 đ</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:18px; color:#0f172a; margin-top:10px; padding-top:10px; border-top:1px solid #e2e8f0;">
+                        <span>TỔNG CỘNG THANH TOÁN:</span>
+                        <strong id="inv-grand-total" style="color:#b8860b;">0 đ</strong>
+                    </div>
+                </div>
+
+                <div style="margin-top:30px; text-align:center; font-size:12px; color:#94a3b8; font-style:italic;">
+                    Cảm ơn quý khách đã lựa chọn dịch vụ của HUCE Hotel. Hẹn gặp lại quý khách!
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- MODAL XÁC NHẬN HỦY ĐẶT PHÒNG -->
+    <dialog id="modal-cancel-booking" class="modern-dialog admin-dialog">
+        <div class="admin-modal-box" style="max-width:420px;">
+            <div class="admin-modal-header" style="border-bottom-color:#fee2e2;">
+                <h3 style="color:#dc2626;">Hủy đặt phòng</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-cancel-booking')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div style="width:48px;height:48px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;">🚫</div>
+                    <p id="cancel-booking-msg" style="color:#475569;font-size:14px;line-height:1.6;"></p>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-cancel-booking')">Giữ đơn</button>
+                <button class="admin-btn-delete" id="cancel-booking-confirm-btn">Xác nhận hủy</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- MODAL THÊM/SỬA PHÒNG -->
+    <dialog id="modal-room" class="modern-dialog admin-dialog">
+        <div class="admin-modal-box">
+            <div class="admin-modal-header">
+                <h3 id="modal-room-title">Thêm phòng mới</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-room')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <input type="hidden" id="room-edit-id">
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label>Số phòng <span class="required">*</span></label>
+                        <input type="text" id="room-so-phong" placeholder="VD: 301">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Loại phòng <span class="required">*</span></label>
+                        <select id="room-ma-loai">
+                            <option value="">-- Chọn loại phòng --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="admin-form-group">
+                    <label>Tình trạng</label>
+                    <select id="room-tinh-trang">
+                        <option value="Sẵn sàng">Sẵn sàng</option>
+                        <option value="Đang có khách">Đang có khách</option>
+                        <option value="Đang dọn dẹp">Đang dọn dẹp</option>
+                    </select>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-room')">Hủy</button>
+                <button class="admin-btn-save" onclick="saveRoom()">Lưu</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- MODAL THÊM/SỬA LOẠI PHÒNG -->
+    <dialog id="modal-room-type" class="modern-dialog admin-dialog">
+        <div class="admin-modal-box">
+            <div class="admin-modal-header">
+                <h3 id="modal-room-type-title">Thêm loại phòng mới</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-room-type')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <input type="hidden" id="room-type-edit-id">
+                <div class="admin-form-group">
+                    <label>Tên loại phòng <span class="required">*</span></label>
+                    <input type="text" id="rt-ten" placeholder="VD: Deluxe Double Room">
+                </div>
+                <div class="admin-form-group">
+                    <label>Mô tả</label>
+                    <textarea id="rt-mo-ta" rows="3" placeholder="Mô tả loại phòng..."></textarea>
+                </div>
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label>Số giường <span class="required">*</span></label>
+                        <input type="number" id="rt-so-giuong" min="1" value="1">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Số người tối đa <span class="required">*</span></label>
+                        <input type="number" id="rt-so-nguoi" min="1" value="2">
+                    </div>
+                </div>
+                <div class="admin-form-group">
+                    <label>Giá tiền (đ/đêm) <span class="required">*</span></label>
+                    <input type="number" id="rt-gia" min="0" placeholder="VD: 1200000">
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-room-type')">Hủy</button>
+                <button class="admin-btn-save" onclick="saveRoomType()">Lưu</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- MODAL THÊM/SỬA DỊCH VỤ -->
+    <dialog id="modal-service" class="modern-dialog admin-dialog">
+        <div class="admin-modal-box">
+            <div class="admin-modal-header">
+                <h3 id="modal-service-title">Thêm dịch vụ mới</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-service')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <input type="hidden" id="service-edit-id">
+                <div class="admin-form-group">
+                    <label>Tên dịch vụ <span class="required">*</span></label>
+                    <input type="text" id="svc-ten" placeholder="VD: Spa thư giãn cao cấp">
+                </div>
+                <div class="admin-form-group">
+                    <label>Giá dịch vụ (đ) <span class="required">*</span></label>
+                    <input type="number" id="svc-gia" min="0" placeholder="VD: 500000">
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-service')">Hủy</button>
+                <button class="admin-btn-save" onclick="saveService()">Lưu</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- MODAL THÊM ĐƠN ĐẶT PHÒNG -->
+    <dialog id="modal-booking" class="modern-dialog admin-dialog">
+        <div class="admin-modal-box" style="max-width: 500px;">
+            <div class="admin-modal-header">
+                <h3>Tạo Đơn Đặt Phòng (Admin)</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-booking')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <div class="admin-form-group">
+                    <label>Tên đăng nhập khách (Username trên web)</label>
+                    <input type="text" id="booking-username" placeholder="Nhập username (nếu có)">
+                    <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Nếu khách không có tài khoản web, hãy để trống và điền thông tin bên dưới.</small>
+                </div>
+                <div style="display:flex; gap:15px; margin-bottom: 15px;">
+                    <div class="admin-form-group" style="flex:2; margin-bottom: 0;">
+                        <label>Họ tên khách hàng <span class="required">*</span></label>
+                        <input type="text" id="booking-fullname" placeholder="VD: Nguyễn Văn A">
+                    </div>
+                    <div class="admin-form-group" style="flex:1; margin-bottom: 0;">
+                        <label>Số điện thoại</label>
+                        <input type="text" id="booking-phone" placeholder="VD: 0912...">
+                    </div>
+                </div>
+                <div class="admin-form-group">
+                    <label>Chọn Phòng (Đang sẵn sàng) <span class="required">*</span></label>
+                    <select id="booking-room-id"></select>
+                </div>
+                <div style="display:flex; gap:15px;">
+                    <div class="admin-form-group" style="flex:1;">
+                        <label>Ngày Check-in <span class="required">*</span></label>
+                        <input type="datetime-local" id="booking-checkin">
+                    </div>
+                    <div class="admin-form-group" style="flex:1;">
+                        <label>Ngày Check-out <span class="required">*</span></label>
+                        <input type="datetime-local" id="booking-checkout">
+                    </div>
+                </div>
+                <div class="admin-form-group">
+                    <label>Dịch vụ đi kèm</label>
+                    <div id="booking-services-list" style="display:flex; flex-direction:column; gap:8px; max-height:150px; overflow-y:auto; border:1px solid #e2e8f0; padding:10px; border-radius:6px; background:#f8fafc;">
+                        <!-- Checkboxes will be populated here -->
+                    </div>
+                </div>
+                <div class="admin-form-group">
+                    <label>Tổng Tiền Tạm Tính (đ) <span class="required">*</span></label>
+                    <input type="number" id="booking-price" placeholder="VD: 2500000">
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-booking')">Hủy</button>
+                <button class="admin-btn-save" onclick="saveBookingAdmin()">Tạo Đơn</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- MODAL XÁC NHẬN XÓA -->
+    <dialog id="modal-confirm-delete" class="modern-dialog admin-dialog">
+        <div class="admin-modal-box" style="max-width:420px;">
+            <div class="admin-modal-header" style="border-bottom-color:#fee2e2;">
+                <h3 style="color:#dc2626;">Xác nhận xóa</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-confirm-delete')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div style="width:48px;height:48px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;">🗑️</div>
+                    <p id="modal-delete-msg" style="color:#475569;font-size:14px;line-height:1.6;"></p>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-confirm-delete')">Hủy</button>
+                <button class="admin-btn-delete" id="modal-delete-confirm-btn">Xóa</button>
+            </div>
+        </div>
+    </dialog>
+
+    <div id="toast-container" popover="manual"></div>
+    <script src="admin.js"></script>
+</body>
+</html>

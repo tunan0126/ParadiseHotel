@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paradise - Hệ thống quản lý</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Model Viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+</head>
+<body>
+    
+    <div id="customer-view">
+        <header class="header">
+            <div class="logo" onclick="showHomePage(); window.scrollTo({top:0, behavior:'smooth'});" style="cursor: pointer;">
+                <svg viewBox="0 0 100 100" class="logo-icon" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M50 15 C 25 35, 30 65, 50 80 C 70 65, 75 35, 50 15 Z" />
+                    <path d="M50 80 C 15 80, 10 50, 25 45 C 35 42, 42 48, 45 55" />
+                    <path d="M50 80 C 85 80, 90 50, 75 45 C 65 42, 58 48, 55 55" />
+                    <line x1="50" y1="50" x2="50" y2="95" />
+                </svg>
+                <div class="logo-text-wrapper">
+                    <span class="logo-main">Paradise</span>
+                    <span class="logo-sub">Luxury · Est. 2024</span>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link" data-text="Trang chủ" onclick="showHomePage()">Trang chủ</a>
+                <a href="#" class="nav-link" data-text="Đánh giá" onclick="showReviewPage()">Đánh giá</a>
+                <a href="#" class="nav-link" data-text="Dịch vụ" onclick="showServicePage()">Dịch vụ</a>
+                <button id="nav-login-btn" class="login-btn-header" onclick="openLoginModal()">ĐĂNG NHẬP</button>
+                
+                <div id="user-avatar" class="avatar" onclick="showProfilePage()"></div>
+            </nav>
+        </header>
+
+        <main id="home-screen">
+            
+            <section class="hero-banner" id="hero-banner">
+                
+                <canvas id="hero-particles"></canvas>
+                
+                <div class="hero-spotlight" id="hero-spotlight"></div>
+
+                <div class="hero-inner">
+                    <p class="hero-eyebrow">
+                        <span class="hero-line"></span>
+                        KHOẢNH KHẮC SANG TRỌNG
+                        <span class="hero-line"></span>
+                    </p>
+                    <h1 class="hero-title">Trải Nghiệm<br><em>Đẳng Cấp</em></h1>
+                    <p class="hero-sub">Không gian 5 sao · Dịch vụ tận tâm · Vị trí đắc địa</p>
+                    <div style="display: flex; gap: 15px; justify-content: center;">
+                        <a href="#room-anchor" class="hero-cta" onclick="document.getElementById('room-anchor').scrollIntoView({behavior:'smooth'}); return false;">
+                            Khám phá phòng
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                        </a>
+                        <a href="3d_tour.html" class="hero-cta" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.3);">
+                            Khám phá 3D
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 12 2 12 7 5 11 5"/><polygon points="22 12 18 5 13 5 17 12 22 12"/><polygon points="12 22 17 12 7 12 12 22"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-num" id="stat-rooms-count" data-target="80">0</span>
+                        <span class="hero-stat-label">PHÒNG NGHỈ</span>
+                    </div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-num" data-target="5">0</span>
+                        <span class="hero-stat-label">Sao quốc tế</span>
+                    </div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-num" id="stat-services-count" data-target="10">0</span>
+                        <span class="hero-stat-label">DỊCH VỤ CAO CẤP</span>
+                    </div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-num" data-target="2024">0</span>
+                        <span class="hero-stat-label">Thành lập</span>
+                    </div>
+                </div>
+
+                
+                <div class="hero-overlay"></div>
+            </section>
+
+            
+            <div id="room-anchor"></div>
+            <section class="room-section">
+                
+                <div class="section-header">
+                    <span class="section-label">BỘ SƯU TẬP</span>
+                    <h2 class="section-title-main">Danh Sách <em>Phòng</em></h2>
+                    <p class="section-desc">Chọn không gian lưu trú phù hợp với bạn — từ phòng tiêu chuẩn đến suite hạng sang</p>
+                    <div class="section-rule">
+                        <span></span><span class="section-diamond">◆</span><span></span>
+                    </div>
+                </div>
+
+                <div id="room-container" class="room-grid">
+                    
+                    <div class="room-skeleton"></div>
+                    <div class="room-skeleton"></div>
+                    <div class="room-skeleton"></div>
+                </div>
+
+
+        </main>
+
+            
+            <div class="search-bar-container" id="search-bar">
+                <div class="search-bar">
+                    <div class="search-field">
+                        <label>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Thời gian lưu trú
+                        </label>
+                        <input type="text" id="search-date-range" placeholder="Chọn ngày nhận & trả phòng" readonly>
+                    </div>
+                    
+                    <div class="search-field" id="guest-field-container" style="position: relative;">
+                        <label>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Số khách
+                        </label>
+                        <input type="text" id="search-guests-display" value="1 Người lớn, 0 Trẻ em" readonly style="cursor: pointer;">
+                        
+                        <!-- Guest Popover -->
+                        <div class="guest-popover" id="guest-popover">
+                            <div class="guest-row">
+                                <div class="guest-info">
+                                    <div class="guest-title">Người lớn</div>
+                                    <div class="guest-desc">Từ 13 tuổi trở lên</div>
+                                </div>
+                                <div class="guest-controls">
+                                    <button type="button" class="guest-btn" id="adult-minus">-</button>
+                                    <span class="guest-count" id="adult-count">1</span>
+                                    <button type="button" class="guest-btn" id="adult-plus">+</button>
+                                </div>
+                            </div>
+                            <div class="guest-row">
+                                <div class="guest-info">
+                                    <div class="guest-title">Trẻ em</div>
+                                    <div class="guest-desc">Từ 0-12 tuổi</div>
+                                </div>
+                                <div class="guest-controls">
+                                    <button type="button" class="guest-btn" id="child-minus">-</button>
+                                    <span class="guest-count" id="child-count">0</span>
+                                    <button type="button" class="guest-btn" id="child-plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-field">
+                        <label>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            Loại phòng
+                        </label>
+                        <select id="room-type-search">
+                            <option value="all">Tất cả loại phòng</option>
+                            <option value="Standard Single Room">Standard Single</option>
+                            <option value="Deluxe Double Room">Deluxe Double</option>
+                            <option value="Executive Suite VIP">Suite VIP</option>
+                        </select>
+                    </div>
+                    <div class="search-field">
+                        <label>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            Mức giá
+                        </label>
+                        <select id="room-price-search">
+                            <option value="0-999999999">Tất cả mức giá</option>
+                            <option value="0-1000000">Dưới 1.000.000đ</option>
+                            <option value="1000000-2500000">1.000.000đ - 2.500.000đ</option>
+                            <option value="2500000-999999999">Trên 2.500.000đ</option>
+                        </select>
+                    </div>
+                    <button class="search-btn" onclick="searchRooms()">Tìm phòng</button>
+                </div>
+            </div>
+
+        <main id="review-screen" style="display: none;">
+
+            
+            <section class="rv-hero" id="rv-hero">
+                <div class="rv-hero-inner">
+                    <h1 class="rv-hero-title" onclick="scrollToReviewForm()" title="Bấm để viết đánh giá">
+                        <span class="rv-script" data-text="Đánh giá">Đánh giá</span>
+                        <span class="rv-tracked"><span class="rv-split-char">c</span><span class="rv-split-char">ủ</span><span class="rv-split-char">a</span>&nbsp;<span class="rv-split-char">b</span><span class="rv-split-char">ạ</span><span class="rv-split-char">n</span></span>
+                    </h1>
+                </div>
+                <div class="rv-hero-quote">
+                    <p>“Paradise là tổ hợp khách sạn đạt tiêu chuẩn 5 sao với vị trí đắc địa, không gian sang trọng cùng dịch vụ Spa, Nhà hàng, Hồ bơi và đội ngũ nhân viên tận tâm…”</p>
+                    <span class="rv-quote-line"></span>
+                </div>
+            </section>
+
+            
+            <section class="rv-stats" id="rv-stats">
+                <div class="rv-stat-item">
+                    <div class="rv-stat-number" id="rv-stat-count">0</div>
+                    <div class="rv-stat-label">Tất cả đánh giá</div>
+                </div>
+                <div class="rv-stat-item">
+                    <div class="rv-stat-stars" id="rv-stat-stars">☆☆☆☆☆</div>
+                    <div class="rv-stat-label">Điểm trung bình</div>
+                </div>
+                <div class="rv-stat-item rv-stat-bar">
+                    <div class="rv-bar-top"><span class="rv-bar-track"><span class="rv-bar-fill" id="rv-bar-room"></span></span><span class="rv-bar-pct" id="rv-pct-room">0%</span></div>
+                    <div class="rv-stat-label">Phòng</div>
+                </div>
+                <div class="rv-stat-item rv-stat-bar">
+                    <div class="rv-bar-top"><span class="rv-bar-track"><span class="rv-bar-fill" id="rv-bar-service"></span></span><span class="rv-bar-pct" id="rv-pct-service">0%</span></div>
+                    <div class="rv-stat-label">Dịch vụ</div>
+                </div>
+            </section>
+
+            
+            <section class="rv-form-section">
+                <div class="rv-form-card reveal" id="rv-form-card">
+                    <div class="rv-form-col">
+                        <h3 class="rv-form-heading"><span class="rv-heading-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></span>Gửi chúng tôi đánh giá của bạn</h3>
+                        <div class="rv-row">
+                            <div class="rv-field">
+                                <label><span class="rv-label-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Họ tên*</label>
+                                <input type="text" id="review-fullname-input" placeholder="Nhập họ tên của bạn">
+                            </div>
+                            <div class="rv-field">
+                                <label><span class="rv-label-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5 12 4l9 5.5V19a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5Z"/></svg></span>Loại phòng đã ở*</label>
+                                <select id="review-roomtype-input">
+                                    <option value="">-- Chọn loại phòng --</option>
+                                    <option>Standard Single Room</option>
+                                    <option>Deluxe Double Room</option>
+                                    <option>Executive Suite VIP</option>
+                                    <option>Dịch vụ khác</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="rv-field"><label><span class="rv-label-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Thời gian lưu trú*</label>
+                            <div class="rv-row">
+                                <input type="date" id="review-stay-from">
+                                <input type="date" id="review-stay-to">
+                            </div>
+                        </div>
+                        <div class="rv-field rv-field-grow"><label><span class="rv-label-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Nội dung đánh giá*</label>
+                            <textarea id="review-content-input" rows="5" placeholder="Chia sẻ cảm nhận của bạn về phòng ốc, dịch vụ, không gian…"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="rv-form-col rv-form-col-right">
+                        <h3 class="rv-form-heading"><span class="rv-heading-icon rv-heading-icon-spin">✦</span>Đánh giá</h3>
+                        <div class="rv-field">
+                            <label>Trải nghiệm</label>
+                            <div class="rv-star-picker" id="rv-star-picker">
+                                <span class="rv-star" data-value="1">★</span><span class="rv-star" data-value="2">★</span><span class="rv-star" data-value="3">★</span><span class="rv-star" data-value="4">★</span><span class="rv-star" data-value="5">★</span>
+                            </div>
+                        </div>
+                        <div class="rv-field rv-slider-field">
+                            <label>Phòng <span class="rv-slider-val" id="rv-room-slider-val">80%</span></label>
+                            <input type="range" id="rv-room-slider" min="0" max="100" value="80">
+                        </div>
+                        <div class="rv-field rv-slider-field">
+                            <label>Dịch vụ <span class="rv-slider-val" id="rv-service-slider-val">80%</span></label>
+                            <input type="range" id="rv-service-slider" min="0" max="100" value="80">
+                        </div>
+                        <div class="rv-field">
+                            <label>Ảnh (Tùy chọn)</label>
+                            <label class="rv-upload-box" id="rv-upload-box">
+                                <input type="file" id="review-image-input" accept="image/*">
+                                <span class="rv-upload-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+                                </span>
+                                <span class="rv-upload-btn">Choose File</span>
+                                <span class="rv-upload-name" id="rv-upload-name">Kéo &amp; thả ảnh vào đây, hoặc bấm để chọn</span>
+                            </label>
+                            <div id="rv-upload-preview"></div>
+                        </div>
+                        <button class="rv-submit-btn" id="rv-submit-btn" onclick="submitReview()">
+                            <span class="rv-submit-spinner"></span>
+                            <svg class="rv-submit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                            <span class="rv-submit-text">GỬI ĐÁNH GIÁ</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            
+            <section class="rv-list-section">
+                <div id="review-list" class="rv-list">Đang tải...</div>
+            </section>
+        </main>
+
+        <main id="service-screen" style="display: none;">
+
+            
+            <section class="rv-hero" id="svc-hero">
+                <div class="rv-hero-inner">
+                    <h1 class="rv-hero-title" onclick="document.getElementById('svc-anchor').scrollIntoView({behavior:'smooth', block:'start'})" title="Bấm để xem danh sách dịch vụ">
+                        <span class="rv-script" data-text="Dịch vụ">Dịch vụ</span>
+                        <span class="rv-tracked"><span class="rv-split-char">t</span><span class="rv-split-char">i</span><span class="rv-split-char">ệ</span><span class="rv-split-char">n</span>&nbsp;<span class="rv-split-char">í</span><span class="rv-split-char">c</span><span class="rv-split-char">h</span></span>
+                    </h1>
+                </div>
+                <div class="rv-hero-quote">
+                    <p>"Từ phút thư giãn tại Spa, bữa sáng buffet thượng hạng đến những chuyến đưa đón tận tâm — mỗi tiện ích tại Paradise đều được chăm chút để nâng tầm kỳ nghỉ của bạn."</p>
+                    <span class="rv-quote-line"></span>
+                </div>
+            </section>
+
+            
+            <div id="svc-anchor"></div>
+            <section class="room-section">
+                <div class="section-header">
+                    <span class="section-label">TIỆN NGHI ĐẲNG CẤP</span>
+                    <h2 class="section-title-main">Trải Nghiệm <em>Hoàn Hảo</em></h2>
+                    <p class="section-desc">Mỗi dịch vụ đều có thể thêm trực tiếp khi đặt phòng để hành trình nghỉ dưỡng của bạn thêm tròn vẹn</p>
+                    <div class="section-rule">
+                        <span></span><span class="section-diamond">◆</span><span></span>
+                    </div>
+                </div>
+
+                <div id="service-list" class="room-grid">
+                    <div class="room-skeleton"></div>
+                    <div class="room-skeleton"></div>
+                    <div class="room-skeleton"></div>
+                </div>
+            </section>
+        </main>
+
+        <main id="profile-screen" style="display: none; background-color: #f8f9fa; padding: 40px 0;">
+            <div class="profile-container">
+                <aside class="profile-sidebar">
+                    <div class="profile-sidebar-top">
+                        <div class="profile-avatar-large" id="profile-avatar-large">A</div>
+                        <h3 id="profile-name-display">Người dùng</h3>
+                        <p class="profile-role">Khách hàng thân thiết</p>
+                    </div>
+                    <ul class="profile-menu">
+                        <li id="tab-menu-info" class="tab-item active"><a href="#" onclick="switchProfileTab('info')">Thông tin cá nhân</a></li>
+                        <li id="tab-menu-history" class="tab-item"><a href="#" onclick="switchProfileTab('history')">Lịch sử đặt phòng</a></li>
+                        <li id="tab-menu-password" class="tab-item"><a href="#" onclick="switchProfileTab('password')">Đổi mật khẩu</a></li>
+                        <li id="tab-menu-services" class="tab-item"><a href="#" onclick="switchProfileTab('services')">Dịch vụ đã dùng</a></li>
+                        <li style="margin-top: 20px; border-top: 1px solid #f0e8d5; padding-top: 16px;">
+                            <a href="#" onclick="logout()" class="profile-logout-btn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                Đăng xuất
+                            </a>
+                        </li>
+                    </ul>
+                </aside>
+
+                <section class="profile-content tab-content" id="tab-content-info">
+                    <h2>Thông tin cá nhân</h2>
+                    <div class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group"><label>HỌ VÀ TÊN</label><input type="text" id="prof-fullname"></div>
+                            <div class="form-group"><label>SỐ ĐIỆN THOẠI</label><input type="text" id="prof-phone"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>EMAIL</label><input type="email" id="prof-email" readonly style="background-color: #f4f4f4; color: #888;"></div>
+                            <div class="form-group"><label>SỐ CCCD/PASSPORT</label><input type="text" id="prof-idcard"></div>
+                        </div>
+                        <div class="form-group"><label>ĐỊA CHỈ</label><input type="text" id="prof-address"></div>
+                        <div class="profile-actions"><button class="btn-update" onclick="updateProfile()">CẬP NHẬT THÔNG TIN</button></div>
+                    </div>
+                </section>
+
+                <section class="profile-content tab-content" id="tab-content-history" style="display: none;">
+                    <h2>Lịch sử đặt phòng</h2>
+                    <div class="history-table-wrap">
+                        <table class="history-table">
+                            <thead><tr><th>MÃ ĐƠN</th><th>LOẠI PHÒNG</th><th>NGÀY ĐẾN - ĐI</th><th>TRẠNG THÁI</th><th>TỔNG TIỀN</th></tr></thead>
+                            <tbody id="history-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="profile-content tab-content" id="tab-content-password" style="display: none;">
+                    <h2>Đổi mật khẩu</h2>
+                    <div class="profile-form" style="max-width: 500px;">
+                        <div class="form-group"><label>MẬT KHẨU HIỆN TẠI</label><input type="password" id="old-password"></div>
+                        <div class="form-group"><label>MẬT KHẨU MỚI</label><input type="password" id="new-password"></div>
+                        <div class="form-group"><label>XÁC NHẬN MẬT KHẨU</label><input type="password" id="confirm-new-password"></div>
+                        <button class="btn-update" onclick="changePassword()">CẬP NHẬT MẬT KHẨU</button>
+                    </div>
+                </section>
+
+                <section class="profile-content tab-content" id="tab-content-services" style="display: none;">
+                    <h2>Dịch vụ đã dùng</h2>
+                    <div class="history-table-wrap">
+                        <table class="history-table">
+                            <thead><tr><th>MÃ ĐƠN</th><th>TÊN DỊCH VỤ</th><th>NGÀY SỬ DỤNG</th><th>SỐ LƯỢNG</th><th>TỔNG TIỀN</th></tr></thead>
+                            <tbody id="services-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <main id="about-screen" style="display: none;">
+
+            <div class="scrolly-wrapper">
+                <div class="scrolly-bg-container" style="background: radial-gradient(circle at 50% 50%, #1f2226 0%, #08090a 100%); overflow: hidden;">
+                    <!-- Đã gỡ bỏ ảnh nền để dùng gradient trơn sang trọng, làm nổi bật mô hình 3D -->
+
+                    <!-- 3D Hotel Model -->
+                    <model-viewer 
+                        id="hero-3d-model"
+                        src="models/skyscraper/scene.gltf" 
+                        alt="3D Hotel Model" 
+                        camera-controls
+                        disable-zoom
+                        disable-pan
+                        interaction-prompt="none"
+                        camera-orbit="-45deg 75deg 20%" 
+                        camera-target="auto auto auto"
+                        min-camera-orbit="auto auto 0%"
+                        max-camera-orbit="auto 85deg auto"
+                        field-of-view="30deg"
+                        environment-image="neutral"
+                        exposure="1.2"
+                        shadow-intensity="1.5"
+                        style="
+                            position: absolute; 
+                            top: 0; 
+                            left: 0; 
+                            width: 100%; 
+                            height: 100%; 
+                            z-index: 2;
+                        ">
+                    </model-viewer>
+
+                    <!-- Lớp sương mù/Vignette che viền mặt đất -->
+                    <div style="
+                        position: absolute; 
+                        top: 0; 
+                        left: 0; 
+                        width: 100%; 
+                        height: 100%; 
+                        z-index: 3; 
+                        pointer-events: none; 
+                        background: radial-gradient(ellipse 100% 100% at 35% 50%, transparent 30%, #08090a 85%);
+                    "></div>
+
+                    <div class="scrolly-overlay" style="z-index: 4; background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, #000 100%);"></div>
+                </div>
+
+                <div class="scrolly-content">
+                    <div class="scrolly-intro">
+                        <h1>VỀ CHÚNG TÔI</h1>
+                        <p>Khám phá câu chuyện đằng sau sự vĩ đại</p>
+                        <div class="scroll-indicator">
+                            <span>Cuộn xuống</span>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="scrolly-scene" id="scene-1">
+                        <div class="scene-text anim-slide-r">
+                            <h2>Bức tranh Toàn cảnh</h2>
+                            <p>Tọa lạc tại vị trí đắc địa nhất, Paradise vươn mình như một biểu tượng của sự uy nghi và lộng lẫy. Từ góc nhìn bao quát, tòa nhà như một viên ngọc quý phát sáng giữa lòng đô thị phồn hoa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                        </div>
+                        <img class="scene-img scene-img-right anim-tilt" src="images/pexels-phamthe-24771668.jpg" alt="Hotel exterior panorama" loading="lazy">
+                    </div>
+                    <div class="scrolly-scene" id="scene-2">
+                        <img class="scene-img scene-img-left anim-flip" src="images/pexels-laysa-silva-2150933900-31418731.jpg" alt="Interior Details" loading="lazy">
+                        <div class="scene-text right-align anim-slide-l">
+                            <h2>Kiến trúc Phục Hưng</h2>
+                            <p>Từng vòm cửa, từng hàng cột đều được thiết kế tỉ mỉ mang âm hưởng kiến trúc Châu Âu cổ điển kết hợp những hình khối 3D đương đại. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        </div>
+                    </div>
+                    <div class="scrolly-scene" id="scene-3">
+                        <div class="scene-text anim-zoom">
+                            <h2>Không gian Đại sảnh</h2>
+                            <p>Bước qua cánh cửa, bạn sẽ choáng ngợp trước không gian đại sảnh lộng lẫy với trần nhà cao vút và những chiếc đèn chùm pha lê khổng lồ. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                        </div>
+                        <img class="scene-img scene-img-right anim-tilt" src="images/pexels-thanh-lam-822158566-19621560.jpg" alt="Lobby details" loading="lazy">
+                    </div>
+                    <div class="scrolly-scene" id="scene-4">
+                        <img class="scene-img scene-img-left anim-spin" src="images/pexels-devansh-rajput-2160987549-37160594.jpg" alt="Room details" loading="lazy">
+                        <div class="scene-text right-align anim-slide-l">
+                            <h2>Chạm vào Tinh hoa</h2>
+                            <p>Cận cảnh từng chi tiết hoa văn chạm trổ, từng bức điêu khắc nghệ thuật đều kể một câu chuyện riêng về sự hoàn mỹ. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        </div>
+                    </div>
+                    <div class="scrolly-scene" id="scene-5">
+                        <div class="scene-text anim-slide-r">
+                            <h2>Trải nghiệm Thượng lưu</h2>
+                            <p>Thưởng thức ẩm thực 5 sao tại nhà hàng trên cao với tầm nhìn vô cực, nơi mọi giác quan của bạn được đánh thức một cách trọn vẹn nhất. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+                        </div>
+                        <img class="scene-img scene-img-right anim-flip" src="images/pexels-change-c-c-974768353-28616663.jpg" alt="Fine dining" loading="lazy">
+                    </div>
+                    <div class="scrolly-scene scrolly-outro">
+                        <div class="outro-text">
+                            <h3 class="outro-eyebrow">Paradise & RESORT</h3>
+                            <h2>Sẵn sàng Trải nghiệm?</h2>
+                            <p class="outro-desc">Hãy để chúng tôi đánh thức mọi giác quan của bạn và tạo nên những kỷ niệm khó quên tại thiên đường nghỉ dưỡng 5 sao bậc nhất.</p>
+                            <div class="outro-contact">
+                                <span>T. +84 123 456 789</span>
+                                <span style="opacity: 0.3;">|</span>
+                                <span>E. reservation@hucehotel.com</span>
+                            </div>
+                            <button onclick="showHomePage(); window.scrollTo(0, 0);" class="outro-btn">TRỞ VỀ TRANG CHỦ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer-modern">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <svg viewBox="0 0 100 100" class="logo-icon footer-logo-icon" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M50 15 C 25 35, 30 65, 50 80 C 70 65, 75 35, 50 15 Z" />
+                            <path d="M50 80 C 15 80, 10 50, 25 45 C 35 42, 42 48, 45 55" />
+                            <path d="M50 80 C 85 80, 90 50, 75 45 C 65 42, 58 48, 55 55" />
+                            <line x1="50" y1="50" x2="50" y2="95" />
+                        </svg>
+                        <span>Paradise</span>
+                    </div>
+                    <p class="footer-slogan">Trải nghiệm nghỉ dưỡng đẳng cấp 5 sao với không gian sang trọng và dịch vụ tận tâm. Nơi lưu giữ những khoảnh khắc tuyệt vời của bạn.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>KHÁM PHÁ</h3>
+                    <ul>
+                        <li><a href="#" onclick="showAboutPage(); return false;">Về chúng tôi</a></li>
+                        <li><a href="#room-anchor">Phòng & Suite</a></li>
+                        <li><a href="#" onclick="showServicePage(); window.scrollTo({top:0, behavior:'smooth'});">Dịch vụ & Spa</a></li>
+                        <li><a href="#" onclick="showReviewPage(); window.scrollTo({top:0, behavior:'smooth'});">Đánh giá khách hàng</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>LIÊN HỆ</h3>
+                    <p>📍 55 Giải Phóng, Hai Bà Trưng, Hà Nội</p>
+                    <p>📞 +84 123 456 789</p>
+                    <p>✉️ contact@hucehotel.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Paradise. All rights reserved.</p>
+                <div class="social-icons">
+                    <a href="https://facebook.com/tuananhisme" target="_blank" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="https://instagram.com/tuananh2601006/" target="_blank" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://github.com/tunan0126" target="_blank" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    
+    <main id="admin-screen" class="admin-layout" style="display: none;">
+        <aside class="admin-sidebar-nav">
+            <h2 class="admin-logo-text">ADMIN PANEL</h2>
+            <ul class="admin-nav-menu">
+                <li id="nav-admin-rooms" class="active"><a href="#" onclick="switchAdminTab('rooms')">Quản lý Phòng</a></li>
+                <li id="nav-admin-room-types"><a href="#" onclick="switchAdminTab('room-types')">Quản lý Loại phòng</a></li>
+                <li id="nav-admin-bookings"><a href="#" onclick="switchAdminTab('bookings')">Quản lý Đặt phòng</a></li>
+                <li id="nav-admin-services"><a href="#" onclick="switchAdminTab('services')">Quản lý Dịch vụ</a></li>
+                <li id="nav-admin-settings"><a href="#" onclick="switchAdminTab('settings')">Cài đặt hệ thống</a></li>
+            </ul>
+            <button class="admin-logout-btn" onclick="logout()">Đăng xuất</button>
+        </aside>
+        
+        <section class="admin-main-content">
+            <div id="admin-tab-rooms" class="admin-tab-content">
+                <div class="admin-page-header">
+                    <div>
+                        <h3 class="admin-page-title">Quản lý Danh sách Phòng</h3>
+                        <p class="admin-page-subtitle">Theo dõi tình trạng và quản lý toàn bộ phòng của khách sạn</p>
+                    </div>
+                    <button class="btn-add-room" onclick="addRoom()">+ Thêm phòng mới</button>
+                </div>
+
+                
+                <div class="admin-stats-row">
+                    <div class="admin-stat-card">
+                        <div class="stat-number" id="stat-total-rooms">0</div>
+                        <div class="stat-label">TỔNG SỐ PHÒNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number green" id="stat-ready-rooms">0</div>
+                        <div class="stat-label">SẴN SÀNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number orange" id="stat-occupied-rooms">0</div>
+                        <div class="stat-label">ĐANG CÓ KHÁCH</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number red" id="stat-cleaning-rooms">0</div>
+                        <div class="stat-label">ĐANG DỌN DẸP</div>
+                    </div>
+                </div>
+
+                
+                <div class="admin-search-wrap">
+                    <div class="admin-search-input-wrap">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="admin-search-room-input" placeholder="Tìm theo mã phòng hoặc số phòng..." oninput="searchAdminRooms()">
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-data-table">
+                        <thead><tr><th>PHÒNG</th><th>GIÁ / ĐÊM</th><th>TÌNH TRẠNG</th><th>THAO TÁC</th></tr></thead>
+                        <tbody id="admin-rooms-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-room-types" class="admin-tab-content" style="display: none;">
+                <div class="admin-page-header">
+                    <div>
+                        <h3 class="admin-page-title">Quản lý Loại phòng</h3>
+                        <p class="admin-page-subtitle">Cấu hình các loại phòng và mức giá áp dụng</p>
+                    </div>
+                    <button class="btn-add-room" onclick="addRoomType()">+ Thêm loại phòng mới</button>
+                </div>
+
+                
+                <div class="admin-stats-row">
+                    <div class="admin-stat-card">
+                        <div class="stat-number" id="stat-total-types">0</div>
+                        <div class="stat-label">TỔNG LOẠI PHÒNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number green" id="stat-active-types">0</div>
+                        <div class="stat-label">ĐANG HOẠT ĐỘNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number orange" id="stat-min-price">0</div>
+                        <div class="stat-label">GIÁ THẤP NHẤT</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number" id="stat-max-price">0</div>
+                        <div class="stat-label">GIÁ CAO NHẤT</div>
+                    </div>
+                </div>
+
+                
+                <div class="admin-search-wrap">
+                    <div class="admin-search-input-wrap">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="admin-search-type-input" placeholder="Tìm theo tên loại phòng..." oninput="searchAdminRoomTypes()">
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-data-table">
+                        <thead><tr><th>LOẠI PHÒNG</th><th>SỐ GIƯỜNG</th><th>SỐ NGƯỜI TỐI ĐA</th><th>ĐƠN GIÁ</th><th>THAO TÁC</th></tr></thead>
+                        <tbody id="admin-room-types-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-bookings" class="admin-tab-content" style="display: none;">
+                <div class="admin-header-bar"><h3>Hệ thống Đặt phòng</h3><button class="btn-add-room">+ Tạo đơn mới</button></div>
+                <div class="admin-search-bar"><input type="text" id="admin-search-booking-input" placeholder="Tìm mã đơn, tên khách..."><button class="admin-search-btn" onclick="searchAdminBookings()">Tìm</button></div>
+                <div class="admin-table-container"><table class="admin-data-table">
+                    <thead><tr><th>MÃ ĐƠN</th><th>KHÁCH HÀNG</th><th>THỜI GIAN</th><th>TỔNG TIỀN</th><th>TRẠNG THÁI</th><th>THAO TÁC</th></tr></thead>
+                    <tbody id="admin-bookings-tbody"></tbody>
+                </table></div>
+            </div>
+
+            <div id="admin-tab-services" class="admin-tab-content" style="display: none;">
+                <div class="admin-page-header">
+                    <div>
+                        <h3 class="admin-page-title">Quản lý Dịch vụ</h3>
+                        <p class="admin-page-subtitle">Quản lý các dịch vụ tiện ích và phụ trợ của khách sạn</p>
+                    </div>
+                    <button class="btn-add-room" onclick="addService()">+ Thêm dịch vụ mới</button>
+                </div>
+
+                
+                <div class="admin-stats-row">
+                    <div class="admin-stat-card">
+                        <div class="stat-number" id="stat-total-services">0</div>
+                        <div class="stat-label">TỔNG DỊCH VỤ</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number green" id="stat-active-services">0</div>
+                        <div class="stat-label">ĐANG HOẠT ĐỘNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number orange" id="stat-inactive-services">0</div>
+                        <div class="stat-label">TẠM DỪNG</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-number" id="stat-service-categories">0</div>
+                        <div class="stat-label">DANH MỤC</div>
+                    </div>
+                </div>
+
+                
+                <div class="admin-search-wrap">
+                    <div class="admin-search-input-wrap">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="admin-search-service-input" placeholder="Tìm theo tên dịch vụ hoặc danh mục..." oninput="searchAdminServices()">
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-data-table">
+                        <thead><tr><th>DỊCH VỤ</th><th>DANH MỤC</th><th>ĐƠN GIÁ</th><th>TRẠNG THÁI</th><th>THAO TÁC</th></tr></thead>
+                        <tbody id="admin-services-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-settings" class="admin-tab-content" style="display: none;">
+                <div class="admin-header-bar"><h3>Cài đặt Hệ thống</h3><button class="btn-add-room" style="background-color: #10b981;" onclick="saveAdminSettings()">Lưu cấu hình</button></div>
+                <div class="admin-table-container">
+                    <div class="profile-form" style="max-width: 800px;">
+                        <h4 style="margin-bottom: 15px; color: #334155; border-bottom: 1px solid #eee; padding-bottom: 5px;">Thông tin Cơ bản</h4>
+                        <div class="form-row"><div class="form-group"><label>Tên Khách Sạn</label><input type="text" id="set-hotel-name"></div><div class="form-group"><label>Hotline Hỗ Trợ</label><input type="text" id="set-hotel-phone"></div></div>
+                        <div class="form-group"><label>Địa chỉ</label><input type="text" id="set-hotel-address"></div>
+                        <h4 style="margin-top: 30px; margin-bottom: 15px; color: #334155; border-bottom: 1px solid #eee; padding-bottom: 5px;">Chính sách & Quy định</h4>
+                        <div class="form-row"><div class="form-group"><label>Giờ Check-in</label><input type="time" id="set-checkin-time"></div><div class="form-group"><label>Giờ Check-out</label><input type="time" id="set-checkout-time"></div></div>
+                        <div class="form-group"><label>Thuế VAT (%)</label><input type="number" id="set-vat" min="0" max="100" style="width: 150px;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    
+    <div id="login-modal" class="modal-overlay">
+        <div class="login-box">
+            <button class="close-btn" onclick="closeLoginModal()">✕</button>
+            <div class="login-header"><h2><span class="hotel-name-display">Paradise</span></h2><p>HỆ THỐNG QUẢN LÝ</p></div>
+            <p class="error-msg" id="login-error" style="display: none;">Sai tên đăng nhập hoặc mật khẩu!</p>
+            <div class="login-form-group"><label>BẠN LÀ AI?</label><select id="user-role"><option value="customer">Khách hàng</option><option value="admin">Quản trị viên</option></select></div>
+            <div class="login-form-group"><label>TÊN ĐĂNG NHẬP / EMAIL</label><input type="email" id="username" placeholder="Nhập email"></div>
+            <div class="login-form-group"><label>MẬT KHẨU</label><input type="password" id="password" placeholder="••••••••"></div>
+            <button class="submit-login-btn" onclick="login()">XÁC THỰC ĐĂNG NHẬP</button>
+            <div class="login-footer">Mới đến lần đầu? <a href="#" onclick="switchToRegister()">Đăng ký tài khoản</a></div>
+        </div>
+    </div>
+
+    <div id="register-modal" class="modal-overlay">
+        <div class="login-box" style="max-height: 90vh; overflow-y: auto;">
+            <button class="close-btn" onclick="closeRegisterModal()">✕</button>
+            <div class="login-header"><h2><span class="hotel-name-display">Paradise</span></h2><p>ĐĂNG KÝ THÀNH VIÊN</p></div>
+            <div class="login-form-group"><label>HỌ VÀ TÊN</label><input type="text" id="reg-fullname"></div>
+            <div class="login-form-group"><label>EMAIL (TÊN ĐĂNG NHẬP)</label><input type="email" id="reg-username" placeholder="Nhập email"></div>
+            <div class="login-form-group"><label>SỐ ĐIỆN THOẠI</label><input type="text" id="reg-phone"></div>
+            <div class="login-form-group"><label>SỐ CCCD/PASSPORT</label><input type="text" id="reg-idcard"></div>
+            <div class="login-form-group"><label>ĐỊA CHỈ</label><input type="text" id="reg-address"></div>
+            <div class="login-form-group"><label>MẬT KHẨU</label><input type="password" id="reg-password"></div>
+            <div class="login-form-group"><label>XÁC NHẬN MẬT KHẨU</label><input type="password" id="reg-confirm-password"></div>
+            <button class="submit-login-btn" onclick="register()">ĐĂNG KÝ NGAY</button>
+            <div class="login-footer">Đã có tài khoản? <a href="#" onclick="switchToLogin()">Đăng nhập tại đây</a></div>
+        </div>
+    </div>
+
+    
+   
+    <div id="booking-modal" class="modal-overlay">
+        <div class="booking-box-pro">
+            <button class="close-btn" onclick="closeBookingModal()">✕</button>
+            <div class="booking-header-pro">
+                <h2>XÁC NHẬN ĐẶT PHÒNG</h2>
+                <p>Vui lòng kiểm tra lại thông tin trước khi hoàn tất</p>
+            </div>
+            
+            <div class="booking-content-layout">
+                
+                <div class="booking-left-col">
+                    <div class="booking-card-section">
+                        <h3 class="section-title"><span>🛏️</span> Chi tiết phòng</h3>
+                        <div class="room-info-highlight">
+                            <h4 id="booking-room-name">Tên phòng</h4>
+                            <p class="guest-name">Khách hàng: <strong id="booking-guest-name">---</strong></p>
+                        </div>
+                        
+                        <div class="booking-timeline">
+                            <div class="timeline-box">
+                                <span class="tl-label">NHẬN PHÒNG</span>
+                                <input type="text" id="booking-checkin-input" class="modern-time-picker" placeholder="Chọn ngày" onchange="recalculateBooking()">
+                            </div>
+                            <div class="timeline-divider">
+                                <span class="tl-nights" id="booking-nights-badge">1 đêm</span>
+                                <div class="tl-line"></div>
+                            </div>
+                            <div class="timeline-box text-right">
+                                <span class="tl-label">TRẢ PHÒNG</span>
+                                <input type="text" id="booking-checkout-input" class="modern-time-picker" placeholder="Chọn ngày" onchange="recalculateBooking()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="booking-card-section">
+                        <h3 class="section-title"><span>✨</span> Dịch vụ đi kèm <span style="font-size:12px; font-weight:normal; color:#888;">(Tùy chọn)</span></h3>
+                        <div id="booking-services-list" class="modern-services-list">
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="booking-right-col">
+                    <div class="invoice-card">
+                        <h3>Chi tiết thanh toán</h3>
+                        <div class="invoice-row">
+                            <span>Tiền phòng (<span id="invoice-nights">1</span> đêm)</span>
+                            <span id="booking-room-total-price" class="fw-bold">0 đ</span>
+                        </div>
+                        <div class="invoice-row">
+                            <span>Phí dịch vụ thêm</span>
+                            <span id="booking-services-total-price" class="fw-bold">0 đ</span>
+                        </div>
+                        <div class="invoice-row text-danger">
+                            <span>Thuế VAT (<span id="booking-vat-percent">0</span>%)</span>
+                            <span id="booking-vat-price" class="fw-bold">+0 đ</span>
+                        </div>
+                        
+                        <div class="invoice-divider-line"></div>
+                        
+                        <div class="invoice-total-row">
+                            <span>TỔNG CỘNG</span>
+                            <span id="booking-total-price">0 VND</span>
+                        </div>
+                        
+                        <button class="submit-booking-btn-pro" onclick="submitBooking()">HOÀN TẤT ĐẶT PHÒNG</button>
+                        <p class="secure-note">🔒 Thông tin của bạn được bảo mật tuyệt đối</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL XEM CHI TIẾT PHÒNG -->
+    <dialog id="modal-room-detail" class="modern-dialog">
+        <div class="room-detail-box">
+            <button class="close-btn" onclick="closeRoomDetail()">✕</button>
+            <div class="room-detail-img-wrap">
+                <img id="detail-room-img" src="" alt="Ảnh phòng">
+                <span id="detail-room-status-badge" class="room-detail-badge"></span>
+            </div>
+            <div class="room-detail-body">
+                <div class="room-detail-left">
+                    <p class="room-detail-type" id="detail-room-type"></p>
+                    <h2 class="room-detail-name" id="detail-room-name"></h2>
+                    <div class="room-detail-meta">
+                        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg> <span id="detail-room-beds"></span> giường</span>
+                        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Tối đa <span id="detail-room-max"></span> người</span>
+                        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Phòng <span id="detail-room-number"></span></span>
+                    </div>
+                    <p class="room-detail-desc" id="detail-room-desc"></p>
+                </div>
+                <div class="room-detail-right">
+                    <div class="room-detail-price-box">
+                        <span class="room-detail-price" id="detail-room-price"></span>
+                        <span class="room-detail-per">VND / đêm</span>
+                    </div>
+                    <div id="detail-room-available" style="margin:12px 0;font-size:13px;color:#64748b;"></div>
+                    <button class="room-detail-book-btn" id="detail-book-btn" onclick="bookFromDetail()">CHỌN NGÀY ĐẶT</button>
+                    <p id="detail-unavailable-msg" style="display:none;text-align:center;color:#ef4444;font-size:13px;font-weight:600;margin-top:12px;"></p>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    
+    <div id="modal-room" class="admin-modal-overlay" onclick="if(event.target===this)closeAdminModal('modal-room')">
+        <div class="admin-modal-box">
+            <div class="admin-modal-header">
+                <h3 id="modal-room-title">Thêm phòng mới</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-room')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <input type="hidden" id="room-edit-id">
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label>Số phòng <span class="required">*</span></label>
+                        <input type="text" id="room-so-phong" placeholder="VD: 301">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Loại phòng <span class="required">*</span></label>
+                        <select id="room-ma-loai">
+                            <option value="">-- Chọn loại phòng --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="admin-form-group">
+                    <label>Tình trạng</label>
+                    <select id="room-tinh-trang">
+                        <option value="Sẵn sàng">Sẵn sàng</option>
+                        <option value="Đang có khách">Đang có khách</option>
+                        <option value="Đang dọn dẹp">Đang dọn dẹp</option>
+                    </select>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-room')">Hủy</button>
+                <button class="admin-btn-save" onclick="saveRoom()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="modal-room-type" class="admin-modal-overlay" onclick="if(event.target===this)closeAdminModal('modal-room-type')">
+        <div class="admin-modal-box">
+            <div class="admin-modal-header">
+                <h3 id="modal-room-type-title">Thêm loại phòng mới</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-room-type')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <input type="hidden" id="room-type-edit-id">
+                <div class="admin-form-group">
+                    <label>Tên loại phòng <span class="required">*</span></label>
+                    <input type="text" id="rt-ten" placeholder="VD: Deluxe Double Room">
+                </div>
+                <div class="admin-form-group">
+                    <label>Mô tả</label>
+                    <textarea id="rt-mo-ta" rows="3" placeholder="Mô tả loại phòng..."></textarea>
+                </div>
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label>Số giường <span class="required">*</span></label>
+                        <input type="number" id="rt-so-giuong" min="1" value="1">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Số người tối đa <span class="required">*</span></label>
+                        <input type="number" id="rt-so-nguoi" min="1" value="2">
+                    </div>
+                </div>
+                <div class="admin-form-group">
+                    <label>Giá tiền (đ/đêm) <span class="required">*</span></label>
+                    <input type="number" id="rt-gia" min="0" placeholder="VD: 1200000">
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-room-type')">Hủy</button>
+                <button class="admin-btn-save" onclick="saveRoomType()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="modal-service" class="admin-modal-overlay" onclick="if(event.target===this)closeAdminModal('modal-service')">
+        <div class="admin-modal-box">
+            <div class="admin-modal-header">
+                <h3 id="modal-service-title">Thêm dịch vụ mới</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-service')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <input type="hidden" id="service-edit-id">
+                <div class="admin-form-group">
+                    <label>Tên dịch vụ <span class="required">*</span></label>
+                    <input type="text" id="svc-ten" placeholder="VD: Spa thư giãn cao cấp">
+                </div>
+                <div class="admin-form-group">
+                    <label>Giá dịch vụ (đ) <span class="required">*</span></label>
+                    <input type="number" id="svc-gia" min="0" placeholder="VD: 500000">
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-service')">Hủy</button>
+                <button class="admin-btn-save" onclick="saveService()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="modal-confirm-delete" class="admin-modal-overlay" onclick="if(event.target===this)closeAdminModal('modal-confirm-delete')">
+        <div class="admin-modal-box" style="max-width:420px;">
+            <div class="admin-modal-header" style="border-bottom-color:#fee2e2;">
+                <h3 style="color:#dc2626;">Xác nhận xóa</h3>
+                <button class="admin-modal-close" onclick="closeAdminModal('modal-confirm-delete')">✕</button>
+            </div>
+            <div class="admin-modal-body">
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div style="width:48px;height:48px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;">🗑️</div>
+                    <p id="modal-delete-msg" style="color:#475569;font-size:14px;line-height:1.6;"></p>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button class="admin-btn-cancel" onclick="closeAdminModal('modal-confirm-delete')">Hủy</button>
+                <button class="admin-btn-delete" id="modal-delete-confirm-btn">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script>
+        // Link scroll position to 3D model rotation
+        window.addEventListener('scroll', () => {
+            const modelViewer = document.getElementById('hero-3d-model');
+            if (modelViewer && document.getElementById('about-screen').style.display !== 'none') {
+                // Calculate how far down we've scrolled
+                const scrollY = window.scrollY;
+                
+                // Tính toán phần trăm cuộn của toàn bộ trang web (từ 0 đến 1)
+                const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollProgress = maxScroll > 0 ? (scrollY / maxScroll) : 0;
+                
+                // 1. Zoom: Bắt đầu từ xa (100% - "bé bé"), zoom lại gần (15%)
+                const startRadius = 50;
+                const endRadius = 25;
+                const newRadius = startRadius - (scrollProgress * (startRadius - endRadius));
+                
+                // 2. Trượt: Bắt đầu từ đỉnh (150m), trượt xuống chân (0m)
+                const startY = 100;
+                const endY = -10;
+                const targetY = startY - (scrollProgress * (startY - endY));
+                
+                // 3. Xoay: Xoay về mặt sau của tòa nhà (nơi có hồ bơi/marina)
+                // Đổi sang góc 135 độ (đối diện với mặt đường lộ ở góc -45 độ)
+                const startOrbit = 45;
+                const endOrbit = 0;
+                const newOrbit = startOrbit + (scrollProgress * (endOrbit - startOrbit));
+                
+                // 4. Dịch ngang: Để dịch model sang TRÁI, tăng số X lên (ví dụ: 15m)
+                // Để dịch model sang PHẢI, dùng số âm (ví dụ: -15m)
+                const targetX = 15 ; 
+                
+                modelViewer.setAttribute('camera-orbit', `${newOrbit}deg 75deg ${newRadius}%`);
+                modelViewer.setAttribute('camera-target', `${targetX}m ${targetY}m 0m`);
+            }
+        });
+    </script>
+</body>
+</html>

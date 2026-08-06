@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khám Phá Không Gian 3D - HUCE HOTEL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { overflow: hidden; background: #3899d6; font-family: 'Segoe UI', sans-serif; }
+        #canvas-container { width: 100vw; height: 100vh; }
+        #loading {
+            position: fixed; inset: 0; background: #3899d6;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 10; color: #fff;
+            transition: opacity .6s;
+        }
+        .spinner {
+            width: 48px; height: 48px; border: 4px solid rgba(255,255,255,.3);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin .8s linear infinite; margin-bottom: 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #ui {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 12px; z-index: 5;
+        }
+        .btn {
+            background: rgba(255,255,255,.92); padding: 10px 22px; border-radius: 24px;
+            font-weight: 600; font-size: 13px; color: #1e293b; cursor: pointer;
+            text-decoration: none; border: none; box-shadow: 0 2px 12px rgba(0,0,0,.12);
+            transition: .2s;
+        }
+        .btn:hover { background: #ff4757; color: #fff; }
+        .hint {
+            position: fixed; top: 16px; left: 16px; background: rgba(0,0,0,.35);
+            color: #fff; padding: 12px 16px; border-radius: 8px; font-size: 12px;
+            pointer-events: none; z-index: 5; backdrop-filter: blur(6px); line-height: 1.6;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+<div id="loading"><div class="spinner"></div><h3>Đang dựng mô hình 3D...</h3></div>
+<div class="hint">🖱️ Kéo trái: Xoay · Phải: Di chuyển · Cuộn: Zoom</div>
+<div id="ui">
+    <a href="index.html" class="btn">← Trang chủ</a>
+    <button class="btn" id="btnRotate">⏸ Dừng xoay</button>
+</div>
+<div id="canvas-container"></div>
+
+<script>
+try {
+    /* ===== SCENE ===== */
+    var scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x3899d6);
+
+    var camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.1, 500);
+    camera.position.set(18, 16, 22);
+
+    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.maxPolarAngle = Math.PI / 2 - 0.08;
+    controls.minDistance = 10;
+    controls.maxDistance = 45;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.7;
+    controls.target.set(0, 2.5, 0);
+
+    /* ===== LIGHTING (warm, soft - plasticine look) ===== */
+    scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+
+    var sun = new THREE.DirectionalLight(0xfff8ee, 0.9);
+    sun.position.set(25, 35, 20);
+    sun.castShadow = true;
+    sun.shadow.camera.top = 25;
+    sun.shadow.camera.bottom = -25;
+    sun.shadow.camera.left = -25;
+    sun.shadow.camera.right = 25;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.bias = -0.001;
+    scene.add(sun);
+
+    var fill = new THREE.DirectionalLight(0xaaddff, 0.4);
+    fill.position.set(-20, 20, -15);
+    scene.add(fill);
+
+    var rim = new THREE.DirectionalLight(0xffeedd, 0.3);
+    rim.position.set(-10, 5, 25);
+    scene.add(rim);
+
+    /* ===== MATERIALS (plasticine / clay style) ===== */
+    function clay(hex, r) {
+        return new THREE.MeshStandardMaterial({ color: hex, roughness: r || 0.55, metalness: 0.02 });
+    }
+    var mWhite  = clay(0xf8f8f8, 0.35);
+    var mRed    = clay(0xe01515, 0.55);
+    var mBlue   = clay(0x2255aa, 0.45);
+    var mWater  = new THREE.MeshStandardMaterial({ color: 0x7dd4ff, roughness: 0.05, metalness: 0.02, transparent: true, opacity: 0.78 });
+    var mWood   = clay(0xc8945a, 0.75);
+    var mWoodDk = clay(0x9c6b3a, 0.8);
+    var mGreen1 = clay(0x22aa55, 0.6);
+    var mGreen2 = clay(0x118844, 0.65);
+    var mGreen3 = clay(0x229955, 0.6);
+    var mYellow = clay(0xffcc00, 0.45);
+    var mGold   = new THREE.MeshStandardMaterial({ color: 0xffcc22, roughness: 0.22, metalness: 0.7 });
+    var mTeal   = clay(0x3388bb, 0.35);
+    var mGray   = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.25, metalness: 0.6 });
+
+    var root = new THREE.Group();
+    scene.add(root);
+
+    /* ===== 1. BASE PLATFORM (white fluffy cloud island) ===== */
+    var baseShape = new THREE.Shape();
+    // Smooth rounded blob shape for the base
+    var bx = -1, by = 1, bw = 30, bh = 22, br = 8;
+    baseShape.moveTo(bx - bw/2 + br, by - bh/2);
+    baseShape.lineTo(bx + bw/2 - br, by - bh/2);
+    baseShape.quadraticCurveTo(bx + bw/2, by - bh/2, bx + bw/2, by - bh/2 + br);
+    baseShape.lineTo(bx + bw/2, by + bh/2 - br);
+    baseShape.quadraticCurveTo(bx + bw/2, by + bh/2, bx + bw/2 - br, by + bh/2);
+    baseShape.lineTo(bx - bw/2 + br, by + bh/2);
+    baseShape.quadraticCurveTo(bx - bw/2, by + bh/2, bx - bw/2, by + bh/2 - br);
+    baseShape.lineTo(bx - bw/2, by - bh/2 + br);
+    baseShape.quadraticCurveTo(bx - bw/2, by - bh/2, bx - bw/2 + br, by - bh/2);
+
+    // Cut a hole for the pool
+    var poolHole = new THREE.Path();
+    poolHole.absellipse(-1, 1, 7.2, 7.2 * 0.65, 0, Math.PI * 2, false, 0);
+    baseShape.holes.push(poolHole);
+
+    var baseGeo = new THREE.ExtrudeGeometry(baseShape, { depth: 1.5, bevelEnabled: true, bevelSize: 0.2, bevelThickness: 0.2, bevelSegments: 3 });
+    var baseMesh = new THREE.Mesh(baseGeo, mWhite);
+    baseMesh.rotation.x = Math.PI / 2; // Top face faces +Y
+    baseMesh.position.set(0, -0.05, 0); // Move down slightly to avoid clipping tiles
+    baseMesh.receiveShadow = true;
+    baseMesh.castShadow = true;
+    root.add(baseMesh);
+
+    /* ===== 2. POOL ===== */
+    var poolG = new THREE.Group();
+    poolG.position.set(-1, 0, 1);
+    root.add(poolG);
+
+    // Thick puffy yellow pool rim (torus scaled oval)
+    var rimGeo = new THREE.TorusGeometry(7, 1.1, 20, 64);
+    var poolRim = new THREE.Mesh(rimGeo, mWhite);
+    poolRim.rotation.x = -Math.PI / 2;
+    poolRim.scale.set(1, 0.65, 1);
+    poolRim.position.y = 0.3;
+    poolRim.castShadow = true;
+    poolRim.receiveShadow = true;
+    poolG.add(poolRim);
+
+    // Curved alternating blue/white tiles inside pool edge
+    var tileCount = 28;
+    for (var i = 0; i < tileCount; i++) {
+        var a1 = (i / tileCount) * Math.PI * 2;
+        var a2 = ((i + 0.85) / tileCount) * Math.PI * 2;
+        var tileShape = new THREE.Shape();
+        var innerR = 5.5, outerR = 6.8;
+        var ovalX = 1.0, ovalZ = 0.65;
+        // outer arc
+        tileShape.moveTo(Math.cos(a1) * outerR * ovalX, Math.sin(a1) * outerR * ovalZ);
+        var steps = 4;
+        for (var s = 1; s <= steps; s++) {
+            var aa = a1 + (a2 - a1) * (s / steps);
+            tileShape.lineTo(Math.cos(aa) * outerR * ovalX, Math.sin(aa) * outerR * ovalZ);
+        }
+        // inner arc (reversed)
+        for (var s2 = steps; s2 >= 0; s2--) {
+            var aa2 = a1 + (a2 - a1) * (s2 / steps);
+            tileShape.lineTo(Math.cos(aa2) * innerR * ovalX, Math.sin(aa2) * innerR * ovalZ);
+        }
+        var tileExtGeo = new THREE.ExtrudeGeometry(tileShape, { depth: 0.6, bevelEnabled: true, bevelSize: 0.05, bevelThickness: 0.05, bevelSegments: 1 });
+        var tileMat = (i % 2 === 0) ? mBlue : mWhite;
+        var tileMesh = new THREE.Mesh(tileExtGeo, tileMat);
+        tileMesh.rotation.x = -Math.PI / 2;
+        tileMesh.position.y = 0.0;
+        tileMesh.castShadow = true;
+        poolG.add(tileMesh);
+    }
+
+    // Water surface (oval disc)
+    var waterGeo = new THREE.CylinderGeometry(1, 1, 0.08, 64);
+    waterGeo.scale(5.3, 1, 3.5);
+    var waterMesh = new THREE.Mesh(waterGeo, mWater);
+    waterMesh.position.y = 0.2;
+    poolG.add(waterMesh);
+
+    // Pool bottom
+    var btmGeo = new THREE.CylinderGeometry(1, 1, 0.08, 64);
+    btmGeo.scale(5.3, 1, 3.5);
+    var poolBtm = new THREE.Mesh(btmGeo, clay(0x6ab8dd, 0.4));
+    poolBtm.position.y = -0.2;
+    poolG.add(poolBtm);
+
+    // Floating blocks (ice cubes / play blocks)
+    var floatingBlocks = [];
+    var blockData = [
+        { x: -2, z: -1, c: mBlue, s: 0.55 },
+        { x: 1.5, z: -1.5, c: mWhite, s: 0.5 },
+        { x: -3, z: 1, c: mWhite, s: 0.45 },
+        { x: 0, z: 1.8, c: mBlue, s: 0.5 },
+        { x: 2.5, z: 0.5, c: mWhite, s: 0.4 },
+        { x: -1, z: -2, c: mBlue, s: 0.5 },
+    ];
+    for (var bi = 0; bi < blockData.length; bi++) {
+        var bd = blockData[bi];
+        var blk = new THREE.Mesh(new THREE.BoxGeometry(bd.s, bd.s * 0.6, bd.s), bd.c);
+        blk.position.set(bd.x, 0.35, bd.z);
+        blk.rotation.y = Math.random() * Math.PI;
+        blk.castShadow = true;
+        blk.userData.phase = Math.random() * Math.PI * 2;
+        blk.userData.speed = 1 + Math.random();
+        poolG.add(blk);
+        floatingBlocks.push(blk);
+    }
+
+    /* ===== 3. POOL LADDER (curved handrails) ===== */
+    var ladderG = new THREE.Group();
+    // Curved handrails using TubeGeometry
+    for (var ls = -1; ls <= 1; ls += 2) {
+        var curve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(ls * 0.45, 0, 0.3),
+            new THREE.Vector3(ls * 0.45, 1.5, 0),
+            new THREE.Vector3(ls * 0.55, 2.2, -0.3),
+            new THREE.Vector3(ls * 0.55, 2.5, -0.6)
+        ]);
+        var tubeGeo = new THREE.TubeGeometry(curve, 16, 0.07, 8, false);
+        var railMesh = new THREE.Mesh(tubeGeo, mWhite);
+        railMesh.castShadow = true;
+        ladderG.add(railMesh);
+    }
+    // Rungs
+    for (var lr = 0; lr < 3; lr++) {
+        var rung = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.9, 8), mWhite);
+        rung.rotation.z = Math.PI / 2;
+        rung.position.set(0, 0.4 + lr * 0.65, 0.15 - lr * 0.08);
+        rung.castShadow = true;
+        ladderG.add(rung);
+    }
+    ladderG.position.set(0, 0, -3.2);
+    poolG.add(ladderG);
+
+    /* ===== 4. LIFESAVER ===== */
+    var ringG = new THREE.Group();
+    var lsGeo = new THREE.TorusGeometry(0.9, 0.32, 16, 32);
+    ringG.add(new THREE.Mesh(lsGeo, mWhite));
+    for (var ri = 0; ri < 4; ri++) {
+        var sGeo = new THREE.TorusGeometry(0.92, 0.33, 16, 5, Math.PI / 3.2);
+        var stripe = new THREE.Mesh(sGeo, mRed);
+        stripe.rotation.z = (Math.PI / 2) * ri + 0.25;
+        ringG.add(stripe);
+    }
+    ringG.rotation.x = -Math.PI / 2;
+    ringG.position.set(2.5, 0.4, 1.5);
+    ringG.castShadow = true;
+    poolG.add(ringG);
+
+    /* ===== 5. BEACH BALL (green/white with red) ===== */
+    var ballGeo = new THREE.SphereGeometry(0.6, 32, 32);
+    var bc = document.createElement('canvas');
+    bc.width = 256; bc.height = 256;
+    var bctx = bc.getContext('2d');
+    var ballColors = ['#33aa55', '#ffffff', '#33aa55', '#ffffff', '#33aa55', '#ffffff'];
+    var bsw = 256 / ballColors.length;
+    for (var bci = 0; bci < ballColors.length; bci++) {
+        bctx.fillStyle = ballColors[bci];
+        bctx.fillRect(bci * bsw, 0, bsw, 256);
+    }
+    var ballTex = new THREE.CanvasTexture(bc);
+    var ball = new THREE.Mesh(ballGeo, new THREE.MeshStandardMaterial({ map: ballTex, roughness: 0.35 }));
+    ball.position.set(-3, 0.65, -0.5);
+    ball.castShadow = true;
+    poolG.add(ball);
+
+    /* ===== 6. UMBRELLA (half-dome, red/white) ===== */
+    var umbG = new THREE.Group();
+    // Pole
+    var poleMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 5, 8), mWhite);
+    poleMesh.position.y = 2.5;
+    poleMesh.castShadow = true;
+    umbG.add(poleMesh);
+    // Hemisphere canopy
+    var canopyGeo = new THREE.SphereGeometry(2.8, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+    var uc = document.createElement('canvas');
+    uc.width = 512; uc.height = 256;
+    var uctx = uc.getContext('2d');
+    for (var ui = 0; ui < 8; ui++) {
+        uctx.fillStyle = (ui % 2 === 0) ? '#e01515' : '#ffffff';
+        uctx.fillRect(ui * 64, 0, 64, 256);
+    }
+    var uTex = new THREE.CanvasTexture(uc);
+    var canopyMesh = new THREE.Mesh(canopyGeo, new THREE.MeshStandardMaterial({ map: uTex, roughness: 0.5, side: THREE.DoubleSide }));
+    canopyMesh.position.y = 5;
+    canopyMesh.castShadow = true;
+    umbG.add(canopyMesh);
+    // Tip
+    var tipMesh = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.4, 12), mWhite);
+    tipMesh.position.y = 7.9;
+    umbG.add(tipMesh);
+    umbG.position.set(7.5, 0.2, 0);
+    umbG.rotation.z = -0.06;
+    root.add(umbG);
+
+    /* ===== 7. DECK CHAIR (solid wood lounge) ===== */
+    function createChair(x, z, ry) {
+        var ch = new THREE.Group();
+        
+        var pSeat = new THREE.Group();
+        for(var i=0; i<3; i++) {
+            var pl = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.12, 1.8), mWood);
+            pl.position.x = (i - 1) * 0.3;
+            pl.castShadow = true;
+            pSeat.add(pl);
+        }
+        pSeat.position.set(0, 0.5, 0.4);
+        ch.add(pSeat);
+        
+        var pBack = new THREE.Group();
+        for(var i=0; i<3; i++) {
+            var pl2 = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.12, 1.6), mWood);
+            pl2.position.x = (i - 1) * 0.3;
+            pl2.castShadow = true;
+            pBack.add(pl2);
+        }
+        pBack.position.set(0, 1.0, -0.9);
+        pBack.rotation.x = Math.PI / 4.5;
+        ch.add(pBack);
+        
+        var sup1 = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.1, 0.1), mWoodDk);
+        sup1.position.set(0, 0.44, 0.8);
+        ch.add(sup1);
+        var sup2 = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.1, 0.1), mWoodDk);
+        sup2.position.set(0, 0.44, 0);
+        ch.add(sup2);
+        
+        var legGeo = new THREE.BoxGeometry(0.12, 0.45, 0.12);
+        var legPos = [[-0.4, 0.8], [0.4, 0.8], [-0.4, 0], [0.4, 0]];
+        for (var li = 0; li < legPos.length; li++) {
+            var leg = new THREE.Mesh(legGeo, mWoodDk);
+            leg.position.set(legPos[li][0], 0.22, legPos[li][1]);
+            leg.castShadow = true;
+            ch.add(leg);
+        }
+        ch.position.set(x, 0, z);
+        ch.rotation.y = ry;
+        return ch;
+    }
+    root.add(createChair(10, 3, -Math.PI / 2.5));
+
+    /* ===== 8. PICKET FENCE ===== */
+    var fenceG = new THREE.Group();
+    
+    // Detailed picket shape
+    var pShape = new THREE.Shape();
+    var pw = 0.35, ph = 2.0, pt = 0.3; // width, total height, tip height
+    pShape.moveTo(-pw/2, 0);
+    pShape.lineTo(pw/2, 0);
+    pShape.lineTo(pw/2, ph - pt);
+    pShape.lineTo(0, ph);
+    pShape.lineTo(-pw/2, ph - pt);
+    pShape.lineTo(-pw/2, 0);
+    var picketGeo = new THREE.ExtrudeGeometry(pShape, { depth: 0.1, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02, bevelSegments: 2 });
+    picketGeo.translate(0, 0, -0.05); // center on Z
+    
+    var fCount = 4;
+    var spacing = 0.8;
+    
+    // Rivet geometry
+    var rivetGeo = new THREE.SphereGeometry(0.08, 12, 12);
+    
+    for (var fi = 0; fi < fCount; fi++) {
+        var picket = new THREE.Mesh(picketGeo, mWood);
+        picket.position.set(fi * spacing, 0, 0.1);
+        picket.castShadow = true;
+        picket.receiveShadow = true;
+        fenceG.add(picket);
+        
+        // Rivets
+        for (var ri = 0; ri < 2; ri++) {
+            var rivet = new THREE.Mesh(rivetGeo, mYellow);
+            rivet.position.set(fi * spacing, 0.5 + ri * 0.8, 0.16);
+            rivet.castShadow = true;
+            fenceG.add(rivet);
+        }
+    }
+    
+    var ftotalW = (fCount - 1) * spacing;
+    for (var fh = 0; fh < 2; fh++) {
+        var crossR = new THREE.Mesh(new THREE.BoxGeometry(ftotalW + 0.5, 0.2, 0.1), mWood);
+        crossR.position.set(ftotalW / 2, 0.5 + fh * 0.8, -0.05);
+        crossR.castShadow = true;
+        fenceG.add(crossR);
+    }
+    fenceG.position.set(-9, 0.1, 5.5);
+    fenceG.rotation.y = -Math.PI / 8;
+    root.add(fenceG);
+
+    /* ===== 9. BUSHES ===== */
+    function createBush(x, z, r, mat) {
+        var g = new THREE.Group();
+        // Simple smooth sphere, positioned partly underground
+        var geo = new THREE.SphereGeometry(r, 32, 32);
+        var mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(0, r * 0.6, 0); // Buried 40% underground to look like a dome
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        g.add(mesh);
+        
+        g.position.set(x, 0, z);
+        return g;
+    }
+    // Left bush cluster (front left)
+    root.add(createBush(-11, 6, 1.4, mGreen1));
+    root.add(createBush(-12.5, 5, 1.0, mGreen1));
+    // Right bush (near fence right end)
+    root.add(createBush(-6, 6, 1.6, mGreen1));
+
+    /* ===== 10. HOTEL SIGN ===== */
+    var signG = new THREE.Group();
+    // Pole removed so sign floats
+
+    // Combined Board and Crown Body
+    var bShape = new THREE.Shape();
+    var BW = 6, BH = 3.5, BR = 0.7;
+    
+    bShape.moveTo(-BW/2+BR, -BH/2);
+    bShape.lineTo(BW/2-BR, -BH/2);
+    bShape.quadraticCurveTo(BW/2, -BH/2, BW/2, -BH/2+BR);
+    bShape.lineTo(BW/2, BH/2); // Right edge straight up to base of crown
+    
+    // Crown top
+    bShape.quadraticCurveTo(1.5, BH/2 + 0.3, 0, BH/2 + 1.5);
+    bShape.quadraticCurveTo(-1.5, BH/2 + 0.3, -BW/2, BH/2);
+    
+    bShape.lineTo(-BW/2, -BH/2+BR);
+    bShape.quadraticCurveTo(-BW/2, -BH/2, -BW/2+BR, -BH/2);
+
+    var boardGeo = new THREE.ExtrudeGeometry(bShape, { depth: 0.5, bevelEnabled: true, bevelSize: 0.12, bevelThickness: 0.1, bevelSegments: 4 });
+    var boardMesh = new THREE.Mesh(boardGeo, mRed);
+    boardMesh.position.set(0, 0, 0); // Position relative to group
+    boardMesh.castShadow = true;
+    signG.add(boardMesh);
+
+    // Decorative dots
+    for (var di = 0; di < 16; di++) {
+        var da = (di / 16) * Math.PI * 2;
+        var drx = 2.6, dry = 1.4;
+        var dot = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 6), mWhite);
+        dot.position.set(Math.cos(da) * drx, Math.sin(da) * dry, 0.62);
+        signG.add(dot);
+    }
+
+    // "HOTEL" text via canvas
+    var tc = document.createElement('canvas');
+    tc.width = 512; tc.height = 200;
+    var tctx = tc.getContext('2d');
+    tctx.clearRect(0, 0, 512, 200);
+    tctx.fillStyle = '#ffffff';
+    tctx.font = 'bold 120px Arial, sans-serif';
+    tctx.textAlign = 'center';
+    tctx.textBaseline = 'middle';
+    tctx.fillText('HOTEL', 256, 110);
+    var hotelTex = new THREE.CanvasTexture(tc);
+    var hotelMat = new THREE.MeshBasicMaterial({ map: hotelTex, transparent: true, side: THREE.DoubleSide });
+    var hotelPlane = new THREE.Mesh(new THREE.PlaneGeometry(5, 2), hotelMat);
+    hotelPlane.position.set(0, 0, 0.62); // Centered vertically, sitting on front face
+    signG.add(hotelPlane);
+
+    // Empty white text box below text
+    var textBox = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.6, 0.1), mWhite);
+    textBox.position.set(0, -1.0, 0.52);
+    signG.add(textBox);
+
+    // Stars (3)
+    function createStar(sx, sy, sz) {
+        var shape = new THREE.Shape();
+        for (var si = 0; si < 10; si++) {
+            var ang = (si * Math.PI) / 5 - Math.PI / 2;
+            var rr = si % 2 === 0 ? sz : sz * 0.38;
+            if (si === 0) shape.moveTo(Math.cos(ang) * rr, Math.sin(ang) * rr);
+            else shape.lineTo(Math.cos(ang) * rr, Math.sin(ang) * rr);
+        }
+        var geo = new THREE.ExtrudeGeometry(shape, { depth: 0.14, bevelEnabled: true, bevelSize: 0.04, bevelThickness: 0.04, bevelSegments: 1 });
+        var star = new THREE.Mesh(geo, mGold);
+        star.position.set(sx, sy, 0.62); // Shifted forward to sit on front face
+        star.castShadow = true;
+        return star;
+    }
+    signG.add(createStar(-1.4, 2.3, 0.45));
+    signG.add(createStar(0, 2.8, 0.55));
+    signG.add(createStar(1.4, 2.3, 0.45));
+
+    signG.position.set(6, 12, -1.5);
+    signG.rotation.y = -0.15;
+    root.add(signG);
+
+    /* ===== 11. MENU CLIPBOARD ===== */
+    var menuG = new THREE.Group();
+    // Board
+    var menuBd = new THREE.Mesh(new THREE.BoxGeometry(2.2, 3, 0.18), clay(0xfff5d0, 0.6));
+    menuBd.castShadow = true;
+    menuG.add(menuBd);
+    // Clip
+    var clipMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 0.2, 16), mBlue);
+    clipMesh.rotation.x = Math.PI / 2;
+    clipMesh.position.set(0, 1.5, 0.06);
+    clipMesh.castShadow = true;
+    menuG.add(clipMesh);
+    // Text lines via canvas
+    var lc = document.createElement('canvas');
+    lc.width = 220; lc.height = 300;
+    var lctx = lc.getContext('2d');
+    lctx.clearRect(0, 0, 220, 300);
+    lctx.fillStyle = '#e01515';
+    lctx.font = 'bold 36px Arial';
+    lctx.fillText('MENU', 60, 45);
+    
+    // Blue icons
+    lctx.fillStyle = '#3388bb';
+    lctx.beginPath(); lctx.arc(35, 35, 12, 0, Math.PI*2); lctx.fill();
+    lctx.beginPath(); lctx.arc(175, 35, 12, 0, Math.PI*2); lctx.fill();
+    lctx.fillStyle = '#888';
+    for (var mi = 0; mi < 9; mi++) {
+        var mw = 90 + Math.random() * 80;
+        lctx.fillRect(22, 65 + mi * 24, mw, 5);
+    }
+    var menuTex = new THREE.CanvasTexture(lc);
+    var menuPl = new THREE.Mesh(new THREE.PlaneGeometry(2, 2.7), new THREE.MeshBasicMaterial({ map: menuTex, transparent: true }));
+    menuPl.position.z = 0.1;
+    menuG.add(menuPl);
+    menuG.position.set(10.5, 8.5, -0.5);
+    menuG.rotation.set(-0.1, 0.1, -0.3);
+    root.add(menuG);
+
+    /* ===== 12. SERVICE BELL ===== */
+    var bellG = new THREE.Group();
+    // Gold dome
+    var bellDome = new THREE.Mesh(
+        new THREE.SphereGeometry(1.1, 28, 16, 0, Math.PI * 2, 0, Math.PI / 2),
+        mGold
+    );
+    bellDome.castShadow = true;
+    bellG.add(bellDome);
+    // Blue ring
+    var bellRing = new THREE.Mesh(new THREE.TorusGeometry(1.1, 0.14, 10, 32), mBlue);
+    bellRing.rotation.x = Math.PI / 2;
+    bellG.add(bellRing);
+    // Blue base plate
+    var bellPlate = new THREE.Mesh(new THREE.CylinderGeometry(1.25, 1.25, 0.22, 28), mBlue);
+    bellPlate.position.y = -0.08;
+    bellG.add(bellPlate);
+    // White button on top
+    var bellBtn = new THREE.Mesh(new THREE.SphereGeometry(0.18, 10, 10), mWhite);
+    bellBtn.position.y = 1.1;
+    bellG.add(bellBtn);
+    // Small stem
+    var bellStem = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.2, 8), mGray);
+    bellStem.position.y = 1.0;
+    bellG.add(bellStem);
+
+    bellG.position.set(12.5, 9, -1);
+    bellG.scale.set(0.7, 0.7, 0.7);
+    bellG.rotation.set(0.2, -0.2, 0.3);
+    root.add(bellG);
+
+    /* ===== WATER SPLASH EFFECTS ===== */
+    var splashes = [];
+    for (var spi = 0; spi < 15; spi++) {
+        var spSize = 0.08 + Math.random() * 0.12;
+        var spGeo = new THREE.SphereGeometry(spSize, 6, 6);
+        var spMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 + Math.random() * 0.3 });
+        var spMesh = new THREE.Mesh(spGeo, spMat);
+        var spa = Math.random() * Math.PI * 2;
+        var spr = 1.5 + Math.random() * 3.5;
+        spMesh.position.set(-1 + Math.cos(spa) * spr * 0.9, 0.35 + Math.random() * 0.6, 1 + Math.sin(spa) * spr * 0.6);
+        spMesh.userData.baseY = spMesh.position.y;
+        spMesh.userData.speed = 1.5 + Math.random() * 2.5;
+        spMesh.userData.phase = Math.random() * Math.PI * 2;
+        root.add(spMesh);
+        splashes.push(spMesh);
+    }
+
+    /* ===== HIDE LOADING ===== */
+    setTimeout(function() {
+        var ld = document.getElementById('loading');
+        ld.style.opacity = '0';
+        setTimeout(function() { ld.style.display = 'none'; }, 600);
+    }, 600);
+
+    /* ===== UI ===== */
+    document.getElementById('btnRotate').onclick = function() {
+        controls.autoRotate = !controls.autoRotate;
+        this.textContent = controls.autoRotate ? '⏸ Dừng xoay' : '▶ Tự động xoay';
+    };
+
+    window.addEventListener('resize', function() {
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+    });
+
+    /* ===== ANIMATION ===== */
+    var clock = new THREE.Clock();
+    function animate() {
+        requestAnimationFrame(animate);
+        var t = clock.getElapsedTime();
+
+        // Float lifesaver
+        ringG.position.y = 0.4 + Math.sin(t * 1.5) * 0.08;
+        ringG.rotation.z = Math.sin(t * 0.7) * 0.04;
+
+        // Float beach ball
+        ball.position.y = 0.65 + Math.sin(t * 2) * 0.1;
+        ball.rotation.y += 0.006;
+        ball.rotation.x += 0.002;
+
+        // Float blocks
+        for (var fbi = 0; fbi < floatingBlocks.length; fbi++) {
+            var fb = floatingBlocks[fbi];
+            fb.position.y = 0.35 + Math.sin(t * fb.userData.speed + fb.userData.phase) * 0.06;
+            fb.rotation.y += 0.002;
+        }
+
+        // Splash drops bob
+        for (var sdi = 0; sdi < splashes.length; sdi++) {
+            var sd = splashes[sdi];
+            sd.position.y = sd.userData.baseY + Math.sin(t * sd.userData.speed + sd.userData.phase) * 0.15;
+        }
+
+        // Menu gentle sway
+        menuG.rotation.z = 0.08 + Math.sin(t * 0.7) * 0.03;
+
+        // Bell gentle bob
+        bellG.position.y = 8 + Math.sin(t * 1.2 + 1) * 0.1;
+
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+
+} catch(err) {
+    console.error('3D Error:', err);
+    var ldErr = document.getElementById('loading');
+    if (ldErr) {
+        ldErr.innerHTML = '<h3 style="color:#faa">Lỗi: ' + err.message + '</h3><br><a href="index.html" style="color:white">Quay về trang chủ</a>';
+    }
+}
+</script>
+</body>
+</html>
