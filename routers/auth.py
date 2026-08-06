@@ -59,10 +59,10 @@ async def register(data: RegisterModel):
             "MaVaiTro": "ROLE_CUSTOMER",
             "MaKH": new_ma_kh,
             "HoTenKH": data.fullname,
-            "Email": data.email,
+            "Email": "",
             "SDT": data.phone,
-            "DiaChi": "",
-            "CCCD": ""
+            "DiaChi": data.address,
+            "CCCD": data.idcard
         }
         
         await db.users.insert_one(new_user)
