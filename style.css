@@ -31,8 +31,8 @@ body {
         display: flex; justify-content: space-between; align-items: center;
         padding: 0 52px; height: 74px; overflow: hidden;
         background: var(--bg-header);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        /*backdrop-filter: blur*/(16px);
+        -webkit-/*backdrop-filter: blur*/(16px);
         border-bottom: 1px solid var(--border-light);
     }
     .header::before {
@@ -644,8 +644,8 @@ body {
         display: flex; justify-content: center; align-items: center;
         padding: 8px 12px;
         background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
+        /*backdrop-filter: blur*/(25px);
+        -webkit-/*backdrop-filter: blur*/(25px);
         border: 1px solid rgba(255, 255, 255, 0.8);
         border-radius: 60px;
         box-shadow: 0 15px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.4) inset;
@@ -718,7 +718,7 @@ body {
     }
     .search-field .choices__list--dropdown {
         border-radius: 16px !important; border: 1px solid rgba(255,255,255,0.8) !important; background: rgba(255,255,255,0.95) !important;
-        backdrop-filter: blur(15px) !important; box-shadow: 0 -15px 40px rgba(0,0,0,0.15) !important; margin-bottom: 10px !important;
+        /*backdrop-filter: blur*/(15px) !important; box-shadow: 0 -15px 40px rgba(0,0,0,0.15) !important; margin-bottom: 10px !important;
         width: max-content !important; min-width: 100% !important;
     }
     .search-field .choices__list--dropdown .choices__item {
@@ -735,7 +735,7 @@ body {
         position: absolute; bottom: calc(100% + 15px); top: auto; left: 0;
         width: 260px; padding: 20px;
         background: var(--glass-bg);
-        backdrop-filter: blur(15px);
+        /*backdrop-filter: blur*/(15px);
         border: 1px solid var(--border-light);
         border-radius: 16px;
         box-shadow: 0 15px 40px rgba(0,0,0,0.15);
@@ -834,8 +834,8 @@ body {
     
     dialog.modern-dialog::backdrop {
         background: rgba(15, 23, 42, 0.4);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        /*backdrop-filter: blur*/(8px);
+        -webkit-/*backdrop-filter: blur*/(8px);
         opacity: 0;
         transition: opacity 0.3s ease, display 0.3s allow-discrete, overlay 0.3s allow-discrete;
     }
@@ -852,13 +852,13 @@ body {
 
     .modal-overlay { /* Legacy support if any */
         position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-        background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        background: rgba(15, 23, 42, 0.3); /*backdrop-filter: blur*/(8px); -webkit-/*backdrop-filter: blur*/(8px);
         display: none; justify-content: center; align-items: center; z-index: 9999; 
     }
     .login-box { 
         background: var(--glass-bg, rgba(255, 255, 255, 0.8)); 
-        backdrop-filter: blur(20px); 
-        -webkit-backdrop-filter: blur(20px);
+        /*backdrop-filter: blur*/(20px); 
+        -webkit-/*backdrop-filter: blur*/(20px);
         padding: 40px; 
         width: 400px; 
         text-align: center; 
@@ -1500,7 +1500,7 @@ body {
     .invoice-card { 
         background: rgba(255,255,255,0.7); border-radius: 16px; padding: 30px; 
         border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 10px 40px rgba(0,0,0,0.05); position: sticky; top: 0;
-        backdrop-filter: blur(10px);
+        /*backdrop-filter: blur*/(10px);
     }
     .invoice-card h3 { 
         font-size: 18px; color: #1a1000; margin-bottom: 25px; text-align: center; 
@@ -1554,7 +1554,7 @@ body {
             0 12px 24px rgba(0,0,0,0.06), 
             inset 0 2px 4px rgba(255,255,255,1), 
             0 6px 12px rgba(184, 134, 11, 0.15);
-        backdrop-filter: blur(10px);
+        /*backdrop-filter: blur*/(10px);
         transition: all 0.4s cubic-bezier(0.25, 1.2, 0.35, 1);
     }
     .rv-hero-title::after {
@@ -1829,7 +1829,7 @@ body {
     
     .flatpickr-calendar {
         background: rgba(255,255,255,0.95) !important;
-        backdrop-filter: blur(15px) !important;
+        /*backdrop-filter: blur*/(15px) !important;
         border: 1px solid rgba(255,255,255,0.8) !important;
         border-radius: 16px !important;
         box-shadow: 0 15px 40px rgba(0,0,0,0.15) !important;
@@ -1987,7 +1987,7 @@ body {
     
     .admin-modal-overlay {
         display: none; position: fixed; inset: 0; z-index: 2000;
-        background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px);
+        background: rgba(15, 23, 42, 0.55); /*backdrop-filter: blur*/(4px);
         align-items: center; justify-content: center;
     }
     .admin-modal-overlay.open { display: flex; animation: fadeInOverlay 0.2s ease; }
@@ -2074,7 +2074,7 @@ body {
     }
     #modal-room-detail .close-btn {
         z-index: 10; top: 16px; right: 16px; width: 36px; height: 36px;
-        background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        background: rgba(0,0,0,0.4); /*backdrop-filter: blur*/(8px); -webkit-/*backdrop-filter: blur*/(8px);
         color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
         font-size: 14px; transition: all 0.3s ease; padding: 0;
     }
@@ -2427,7 +2427,7 @@ body {
     width: 48px; height: 48px; border-radius: 50%;
     background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
     color: white; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; backdrop-filter: blur(8px); transition: 0.3s;
+    cursor: pointer; /*backdrop-filter: blur*/(8px); transition: 0.3s;
 }
 .about-close-btn:hover { background: rgba(212,175,55,0.8); transform: scale(1.1); border-color: rgba(212,175,55,1); }
 /* Background Crossfade Logic */

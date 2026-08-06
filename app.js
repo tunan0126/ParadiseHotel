@@ -282,7 +282,7 @@ async function renderReviews() {
                     ${r.roomScore !== null ? `<span>Phòng: <b>${r.roomScore}%</b></span>` : ''}
                     ${r.serviceScore !== null ? `<span>Dịch vụ: <b>${r.serviceScore}%</b></span>` : ''}
                 </div>` : '';
-            const imgHTML = r.image ? `<img src="${r.image}" class="rv-item-image" loading="lazy" decoding="async">` : '';
+            const imgHTML = r.image ? `<img loading="lazy" src="${r.image}" class="rv-item-image" loading="lazy" decoding="async">` : '';
             const noteText = r.note || '';
             const needsExpand = noteText.length > 140;
 
@@ -412,7 +412,7 @@ function initReviewForm() {
             nameSpan.innerText = file.name;
             uploadBox.classList.add('rv-has-file');
             const reader = new FileReader();
-            reader.onload = () => { preview.innerHTML = `<img src="${reader.result}">`; };
+            reader.onload = () => { preview.innerHTML = `<img loading="lazy" src="${reader.result}">`; };
             reader.readAsDataURL(file);
         } else {
             nameSpan.innerText = 'Kéo & thả ảnh vào đây, hoặc bấm để chọn';
@@ -548,7 +548,7 @@ async function renderCustomerServices() {
                 <div class="room-card-img-wrap">
                     <span class="status-badge status-category">${s.category || 'Tiện ích'}</span>
                     <span class="room-card-num">HUCE Hotel</span>
-                    <img src="${getServiceImage(s.name, idx)}" alt="${s.name}" loading="lazy">
+                    <img loading="lazy" src="${getServiceImage(s.name, idx)}" alt="${s.name}" loading="lazy">
                 </div>
                 <div class="room-card-body">
                     <p class="room-card-type">Dịch vụ cao cấp</p>
@@ -654,7 +654,7 @@ async function renderRooms(roomsToRender = null) {
                     <div class="room-card-img-wrap">
                         ${badgeHTML}
                         <span class="room-card-num">Phòng ${room.roomNumber}</span>
-                        <img src="${imageSrc}" alt="${room.name}" loading="lazy" decoding="async">
+                        <img loading="lazy" src="${imageSrc}" alt="${room.name}" loading="lazy" decoding="async">
                     </div>
                     <div class="room-card-body">
                         <p class="room-card-type">${typeLabel}</p>
