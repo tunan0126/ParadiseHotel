@@ -71,6 +71,9 @@ async function login() {
     const userInp = document.getElementById('username').value.trim();
     const passInp = document.getElementById('password').value;
 
+    const submitBtn = document.querySelector('#login-modal .submit-login-btn');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.classList.add('loading'); }
+
     try {
         const response = await fetch('/api/auth/login', {
             method: 'POST',
@@ -79,11 +82,15 @@ async function login() {
         });
         
         if (!response.ok) {
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.classList.remove('loading'); }
             return showToast("Tài khoản hoặc mật khẩu không chính xác.", "error");
         }
         
         const res = await response.json();
-        if (res.role !== roleInp) return showToast("Bạn không có quyền truy cập vào khu vực này.", "error");
+        if (res.role !== roleInp) {
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.classList.remove('loading'); }
+            return showToast("Bạn không có quyền truy cập vào khu vực này.", "error");
+        }
         
         localStorage.setItem('is_logged_in', 'true');
         localStorage.setItem('current_user', res.fullname); 
@@ -233,10 +240,10 @@ function showServicePage() {
 }
 function showProfilePage() { if (localStorage.getItem('is_logged_in') !== 'true') return openLoginModal(); hideAllScreens(); document.getElementById('customer-view').style.display = 'block'; document.getElementById('profile-screen').style.display = 'block'; switchProfileTab('info'); }
 
-function openLoginModal() { document.getElementById('login-modal').style.display = 'flex'; document.getElementById('register-modal').style.display = 'none'; }
-function closeLoginModal() { document.getElementById('login-modal').style.display = 'none'; }
-function openRegisterModal() { document.getElementById('register-modal').style.display = 'flex'; document.getElementById('login-modal').style.display = 'none'; }
-function closeRegisterModal() { document.getElementById('register-modal').style.display = 'none'; }
+function openLoginModal() { document.getElementById('login-modal').style.display = 'flex'; document.getElementById('register-modal').style.display = 'none'; document.body.style.overflow = 'hidden'; }
+function closeLoginModal() { document.getElementById('login-modal').style.display = 'none'; document.body.style.overflow = ''; }
+function openRegisterModal() { document.getElementById('register-modal').style.display = 'flex'; document.getElementById('login-modal').style.display = 'none'; document.body.style.overflow = 'hidden'; }
+function closeRegisterModal() { document.getElementById('register-modal').style.display = 'none'; document.body.style.overflow = ''; }
 function switchToRegister() { openRegisterModal(); }
 function switchToLogin() { openLoginModal(); }
 
@@ -2038,3 +2045,9 @@ function toggleMobileMenu() {
     const navMenu = document.querySelector('.nav-menu');
     navMenu.classList.toggle('mobile-active');
 }
+
+window.addEventListener('click', function(e) {
+    if (e.target.id === 'login-modal') closeLoginModal();
+    if (e.target.id === 'register-modal') closeRegisterModal();
+    if (e.target.id === 'modal-room-detail') closeRoomDetail();
+});
