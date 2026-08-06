@@ -3,7 +3,7 @@ const originalFetch = window.fetch;
 window.fetch = async function(...args) {
     let [resource, config] = args;
     const token = localStorage.getItem('token');
-    if (token && typeof resource === 'string' && resource.includes('/api/') && !resource.includes('/api/login') && !resource.includes('/api/register')) {
+    if (token && typeof resource === 'string' && resource.includes('/api/') && !resource.includes('/api/auth/login') && !resource.includes('/api/auth/register')) {
         config = config || {};
         config.headers = config.headers || {};
         config.headers['Authorization'] = 'Bearer ' + token;
@@ -72,7 +72,7 @@ async function login() {
     const passInp = document.getElementById('password').value;
 
     try {
-        const response = await fetch('/api/login', {
+        const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: userInp, password: passInp })
@@ -127,7 +127,7 @@ async function register() {
     if (data.password !== confirmPass) return showToast("Mật khẩu gõ lại không khớp!", "error");
 
     try {
-        const response = await fetch('/api/register', {
+        const response = await fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
