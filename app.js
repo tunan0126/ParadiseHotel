@@ -2051,3 +2051,27 @@ window.addEventListener('click', function(e) {
     if (e.target.id === 'register-modal') closeRegisterModal();
     if (e.target.id === 'modal-room-detail') closeRoomDetail();
 });
+
+// Smart header logic (hide on scroll down, show on scroll up)
+let lastScrollY = window.scrollY;
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('.header');
+    if (!header) return;
+    const currentScrollY = window.scrollY;
+    
+    // Only apply logic if scrolled past header height
+    if (currentScrollY > 74) {
+        if (currentScrollY > lastScrollY) {
+            // Scrolling down
+            header.classList.add('header-hidden');
+        } else {
+            // Scrolling up
+            header.classList.remove('header-hidden');
+        }
+    } else {
+        // At the top of the page
+        header.classList.remove('header-hidden');
+    }
+    
+    lastScrollY = currentScrollY;
+});

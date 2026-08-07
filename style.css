@@ -3,7 +3,7 @@
 :root {
     color-scheme: light dark;
     --bg-main: light-dark(#faf6ec, #121212);
-    --bg-header: light-dark(rgba(255, 253, 247, 0.75), rgba(18, 18, 18, 0.75));
+    --bg-header: light-dark(rgba(255, 253, 247, 1), rgba(18, 18, 18, 1));
     --text-main: light-dark(#333, #e0e0e0);
     --text-muted: light-dark(#666, #aaa);
     --gold-primary: #d4af37;
@@ -29,11 +29,13 @@ body {
     .header {
         position: sticky; top: 0; z-index: 100;
         display: flex; justify-content: space-between; align-items: center;
-        padding: 0 52px; height: 74px; overflow: hidden;
+        padding: 0 52px; height: 74px; overflow: visible;
         background: var(--bg-header);
-        /*backdrop-filter: blur*/(16px);
-        -webkit-/*backdrop-filter: blur*/(16px);
         border-bottom: 1px solid var(--border-light);
+        transition: transform 0.3s ease;
+    }
+    .header.header-hidden {
+        transform: translateY(-100%);
     }
     .header::before {
         content: ''; position: absolute; inset: 0; pointer-events: none;
