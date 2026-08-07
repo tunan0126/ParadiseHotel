@@ -108,37 +108,25 @@ function switchAdminTab(tabId) {
     document.querySelectorAll('.admin-tab-content').forEach(content => content.style.display = 'none');
     let tabEl = document.getElementById('admin-tab-' + tabId); if (tabEl) tabEl.style.display = 'block';
 
-    if (window.adminPollingInterval) {
-        clearInterval(window.adminPollingInterval);
-        window.adminPollingInterval = null;
+    if (window.adminBookingsPolling) {
+        clearInterval(window.adminBookingsPolling);
+        window.adminBookingsPolling = null;
     }
 
-    if (tabId === 'rooms') {
-        renderAdminRooms(null, false);
-        window.adminPollingInterval = setInterval(() => renderAdminRooms(null, true), 5000);
-    }
-    if (tabId === 'matrix') {
-        loadRoomMatrix(false);
-        window.adminPollingInterval = setInterval(() => loadRoomMatrix(true), 5000);
-    }
-    if (tabId === 'room-types') {
-        renderAdminRoomTypes(null, false);
-        window.adminPollingInterval = setInterval(() => renderAdminRoomTypes(null, true), 5000);
-    }
+    if (tabId === 'rooms') renderAdminRooms();
+    if (tabId === 'matrix') loadRoomMatrix();
+    if (tabId === 'room-types') renderAdminRoomTypes();
     if (tabId === 'bookings') {
         renderAdminBookings(null, false);
-        window.adminPollingInterval = setInterval(() => renderAdminBookings(null, true), 5000);
+        window.adminBookingsPolling = setInterval(() => renderAdminBookings(null, true), 5000);
     }
-    if (tabId === 'services') {
-        renderAdminServices(null, false);
-        window.adminPollingInterval = setInterval(() => renderAdminServices(null, true), 5000);
-    }
+    if (tabId === 'services') renderAdminServices();
     if (tabId === 'settings') renderAdminSettings();
 }
-async function renderAdminRooms(customData = null, isPolling = false) {
+async function renderAdminRooms(customData = null) {
     const tbody = document.getElementById('admin-rooms-tbody'); 
     if (!tbody) return;
-    if (!isPolling) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:24px;">Đang tải...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:24px;">Đang tải...</td></tr>';
     try {
         // Ưu tiên dùng dữ liệu tìm kiếm nếu có
         let rooms = customData;
@@ -149,7 +137,7 @@ async function renderAdminRooms(customData = null, isPolling = false) {
         
         rooms.forEach(r => { if(r.name) r.name = window.translateRoomName(r.name); });
         
-        let newHTML = '';
+        tbody.innerHTML = '';
 
         const total = rooms.length;
         const ready = rooms.filter(r => r.status === 'Sẵn sàng' || r.status === 'Còn trống').length;
@@ -165,8 +153,7 @@ async function renderAdminRooms(customData = null, isPolling = false) {
         if (statCleaning) statCleaning.textContent = cleaning;
 
         if (rooms.length === 0) {
-            newHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:32px;">Chưa có phòng nào.</td></tr>';
-            if (tbody.innerHTML !== newHTML) tbody.innerHTML = newHTML;
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:32px;">Chưa có phòng nào.</td></tr>';
             return;
         }
         rooms.forEach(room => {
@@ -183,7 +170,7 @@ async function renderAdminRooms(customData = null, isPolling = false) {
             const roomEmoji = (roomNameLower.includes('suite') || roomNameLower.includes('vip')) ? suiteSvg : (roomNameLower.includes('deluxe') || roomNameLower.includes('cao cấp')) ? deluxeSvg : standardSvg;
             const maLoai = room.maLoai || '';
 
-            newHTML += `<tr>
+            tbody.innerHTML += `<tr>
                 <td>
                     <div class="room-cell">
                         <div class="room-cell-img-placeholder">${roomEmoji}</div>
@@ -229,9 +216,9 @@ async function mockUpdateStatus(roomId) {
         }
     } catch(e) { showToast("Có lỗi xảy ra khi cập nhật trạng thái phòng.", "error"); }
 }
-async function renderAdminRoomTypes(customData = null, isPolling = false) {
+async function renderAdminRoomTypes(customData = null) {
     const tbody = document.getElementById('admin-room-types-tbody');
-    if (!isPolling) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:24px;">Đang tải...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:24px;">Đang tải...</td></tr>';
     try {
         let types = customData;
         if (!types) {
@@ -241,7 +228,7 @@ async function renderAdminRoomTypes(customData = null, isPolling = false) {
         
         types.forEach(t => { if(t.name) t.name = window.translateRoomName(t.name); });
         
-        let newHTML = '';
+        tbody.innerHTML = '';
 
         const total = types.length;
         const prices = types.map(t => t.price).filter(p => p > 0);
@@ -257,8 +244,7 @@ async function renderAdminRoomTypes(customData = null, isPolling = false) {
         if (elMax) elMax.textContent = maxPrice ? (maxPrice/1000).toFixed(0) + 'K' : '0';
 
         if (types.length === 0) {
-            newHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:32px;">Chưa có loại phòng nào.</td></tr>';
-            if (tbody.innerHTML !== newHTML) tbody.innerHTML = newHTML;
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:32px;">Chưa có loại phòng nào.</td></tr>';
             return;
         }
         const svgIcon1 = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
@@ -270,7 +256,7 @@ async function renderAdminRoomTypes(customData = null, isPolling = false) {
         const typeEmojis = [svgIcon1, svgIcon2, svgIcon3, svgIcon4, svgIcon5];
         types.forEach((type, i) => {
             const soNguoi = typeof type.maxPeople === 'string' ? type.maxPeople.replace(' Người','') : type.maxPeople;
-            newHTML += `<tr>
+            tbody.innerHTML += `<tr>
                 <td>
                     <div class="type-cell">
                         <div class="type-cell-badge">${typeEmojis[i % typeEmojis.length]}</div>
@@ -295,8 +281,7 @@ async function renderAdminRoomTypes(customData = null, isPolling = false) {
                 </td>
             </tr>`;
         });
-        if (tbody.innerHTML !== newHTML) tbody.innerHTML = newHTML;
-    } catch(e) { if (!isPolling) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:24px;">Lỗi kết nối</td></tr>'; }
+    } catch(e) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:24px;">Lỗi kết nối</td></tr>'; }
 }
 async function searchAdminRoomTypes() {
     let kw = document.getElementById('admin-search-type-input').value.trim();
@@ -345,7 +330,7 @@ async function renderAdminServices(customData = null) {
             const res = await fetch('/api/admin/services');
             services = await res.json();
         }
-        let newHTML = '';
+        tbody.innerHTML = '';
 
         const total = services.length;
         const active = services.filter(s => s.status === 'Hoạt động' || s.status === 'active').length;
@@ -361,15 +346,14 @@ async function renderAdminServices(customData = null) {
         if (elCats) elCats.textContent = categories;
 
         if (services.length === 0) {
-            newHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:32px;">Chưa có dịch vụ nào.</td></tr>';
-            if (tbody.innerHTML !== newHTML) tbody.innerHTML = newHTML;
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:32px;">Chưa có dịch vụ nào.</td></tr>';
             return;
         }
         const catEmoji = { 'Spa': '💆', 'Ăn uống': '🍽️', 'Vận chuyển': '🚗', 'Giặt ủi': '👕', 'Thể thao': '🏊', 'Tiện ích': '✨' };
         services.forEach(s => {
             const emoji = catEmoji[s.category] || '⭐';
             const badgeClass = (s.status === 'Hoạt động' || s.status === 'active') ? 'status-active' : 'status-inactive';
-            newHTML += `<tr>
+            tbody.innerHTML += `<tr>
                 <td>
                     <div class="service-cell">
                         <div class="service-cell-icon">${emoji}</div>
@@ -775,20 +759,19 @@ async function saveBookingAdmin() {
 }
 
 // ROOM MATRIX TIMELINE
-async function loadRoomMatrix(isPolling = false) {
+async function loadRoomMatrix() {
     const container = document.getElementById('admin-room-matrix-container');
     if (!container) return;
     const daysSelect = document.getElementById('matrix-days-select');
     const days = daysSelect ? daysSelect.value : 7;
     
-    if (!isPolling) container.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">Đang tải sơ đồ lịch phòng...</div>';
+    container.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">Đang tải sơ đồ lịch phòng...</div>';
     try {
         const res = await fetch(`/api/admin/room-matrix?days=${days}`);
         const data = await res.json();
         
         if (!data.rooms || data.rooms.length === 0) {
-            const newHTML = '<div style="text-align:center; padding:30px; color:#64748b;">Chưa có dữ liệu phòng.</div>';
-            if (container.innerHTML !== newHTML) container.innerHTML = newHTML;
+            container.innerHTML = '<div style="text-align:center; padding:30px; color:#64748b;">Chưa có dữ liệu phòng.</div>';
             return;
         }
         
