@@ -19,6 +19,19 @@ window.fetch = async function(...args) {
     return response;
 };
 
+window.translateRoomName = function(name) {
+    if (!name) return name;
+    const map = {
+        "Standard Single Room": "Phòng Đơn Tiêu Chuẩn",
+        "Deluxe Double Room": "Phòng Đôi Cao Cấp",
+        "Executive Suite VIP": "Phòng Suite VIP",
+        "Standard Single": "Phòng Đơn Tiêu Chuẩn",
+        "Deluxe Double": "Phòng Đôi Cao Cấp",
+        "Suite VIP": "Phòng Suite VIP"
+    };
+    return map[name] || name;
+};
+
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -119,6 +132,9 @@ async function renderAdminRooms(customData = null) {
             const res = await fetch('/api/admin/rooms');
             rooms = await res.json(); 
         }
+        
+        rooms.forEach(r => { if(r.name) r.name = window.translateRoomName(r.name); });
+        
         tbody.innerHTML = '';
 
         const total = rooms.length;
@@ -144,7 +160,8 @@ async function renderAdminRooms(customData = null) {
             if (room.status === 'Đang có khách') badge = 'status-occupied';
             if (room.status === 'Đang dọn dẹp') badge = 'status-cleaning';
 
-            const roomEmoji = room.name && room.name.toLowerCase().includes('suite') ? '🛎️' : room.name && room.name.toLowerCase().includes('deluxe') ? '🛏️' : '🏠';
+            const roomNameLower = (room.name || '').toLowerCase();
+            const roomEmoji = (roomNameLower.includes('suite') || roomNameLower.includes('vip')) ? '🛎️' : (roomNameLower.includes('deluxe') || roomNameLower.includes('cao cấp')) ? '🛏️' : '🏠';
             const maLoai = room.maLoai || '';
 
             tbody.innerHTML += `<tr>
@@ -202,6 +219,9 @@ async function renderAdminRoomTypes(customData = null) {
             const res = await fetch('/api/admin/room-types');
             types = await res.json();
         }
+        
+        types.forEach(t => { if(t.name) t.name = window.translateRoomName(t.name); });
+        
         tbody.innerHTML = '';
 
         const total = types.length;
@@ -410,6 +430,9 @@ async function loadRoomTypeOptions(selectId, selectedValue) {
     try {
         const res = await fetch('/api/admin/room-types');
         const types = await res.json();
+        
+        types.forEach(t => { if(t.name) t.name = window.translateRoomName(t.name); });
+        
         sel.innerHTML = '<option value="">-- Chọn loại phòng --</option>';
         types.forEach(t => {
             const opt = document.createElement('option');

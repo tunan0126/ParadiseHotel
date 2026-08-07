@@ -23,6 +23,19 @@ window.fetch = async function(...args) {
     return response;
 };
 
+window.translateRoomName = function(name) {
+    if (!name) return name;
+    const map = {
+        "Standard Single Room": "Phòng Đơn Tiêu Chuẩn",
+        "Deluxe Double Room": "Phòng Đôi Cao Cấp",
+        "Executive Suite VIP": "Phòng Suite VIP",
+        "Standard Single": "Phòng Đơn Tiêu Chuẩn",
+        "Deluxe Double": "Phòng Đôi Cao Cấp",
+        "Suite VIP": "Phòng Suite VIP"
+    };
+    return map[name] || name;
+};
+
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     if (!container) return alert(message);
@@ -608,6 +621,8 @@ async function renderRooms(roomsToRender = null) {
             displayRooms = await response.json();
         }
         
+        displayRooms.forEach(r => { if(r.name) r.name = window.translateRoomName(r.name); });
+        
         container.innerHTML = ""; 
         if (displayRooms.length === 0) return container.innerHTML = `
             <div style="grid-column:1/-1; text-align:center; padding: 80px 20px; color: #8a7550;">
@@ -649,8 +664,8 @@ async function renderRooms(roomsToRender = null) {
             buttonHTML = `<button class="book-btn" onclick="attemptToBook('${room.id}', '${room.name}', ${room.price})">Chọn ngày đặt</button>`;
         }
 
-            const typeLabel = room.name.includes('Suite') ? 'Suite · Hạng sang' 
-                            : room.name.includes('Deluxe') ? 'Deluxe · Cao cấp'
+            const typeLabel = (room.name.includes('Suite') || room.name.includes('VIP')) ? 'Suite · Hạng sang' 
+                            : (room.name.includes('Deluxe') || room.name.includes('Cao Cấp')) ? 'Deluxe · Cao cấp'
                             : 'Standard · Tiêu chuẩn';
                             
             const imageSrc = luxuryImages[idx % luxuryImages.length];
@@ -702,8 +717,8 @@ async function renderRooms(roomsToRender = null) {
 let detailRoom = null;
 
 function getRoomTypeLabel(name) {
-    if (name.includes('Suite')) return 'Suite · Hạng sang';
-    if (name.includes('Deluxe')) return 'Deluxe · Cao cấp';
+    if (name.includes('Suite') || name.includes('VIP')) return 'Suite · Hạng sang';
+    if (name.includes('Deluxe') || name.includes('Cao Cấp')) return 'Deluxe · Cao cấp';
     return 'Standard · Tiêu chuẩn';
 }
 
