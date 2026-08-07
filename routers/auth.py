@@ -13,11 +13,17 @@ async def login(data: LoginModel):
         
         if not user or not verify_password(data.password, user.get("MatKhau", "")):
             if data.username == "admin" and data.password == "admin123":
-                user = {"_id": "admin", "MaVaiTro": "admin", "HoTenKH": "Administrator"}
+                user = {"_id": "admin", "MaVaiTro": "ROLE_ADMIN", "HoTenKH": "Administrator"}
             else:
                 raise HTTPException(status_code=400, detail="Sai tên đăng nhập hoặc mật khẩu")
         
-        role = user.get("MaVaiTro", "ROLE_CUSTOMER")
+        db_role = user.get("MaVaiTro", "ROLE_CUSTOMER")
+        if db_role == "ROLE_CUSTOMER":
+            role = "customer"
+        elif db_role == "ROLE_ADMIN":
+            role = "admin"
+        else:
+            role = db_role
         
         access_token = create_jwt_token(payload={"sub": user["_id"], "role": role})
         return {
