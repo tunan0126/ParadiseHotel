@@ -968,7 +968,7 @@ async function attemptToBook(roomId, roomName, price) {
         sList.innerHTML = '<p style="font-size:13px; color:#ef4444;">Không thể tải dịch vụ lúc này.</p>';
     } finally {
         updateBookingTotal();
-        document.getElementById('booking-modal').showModal();
+        document.getElementById('booking-modal').style.display = 'flex';
     }
 }
 function recalculateBooking() {
@@ -1822,6 +1822,7 @@ window.addEventListener('load', function() {
             }
         }, { passive: true });
 
+        const toggleBtn = document.getElementById('search-bar-toggle-btn');
         if (toggleBtn) {
             toggleBtn.addEventListener('click', function() {
                 setHidden(false);
