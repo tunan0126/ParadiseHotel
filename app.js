@@ -755,15 +755,15 @@ function openRoomDetail(room) {
         badge.className = 'room-detail-badge status-ready-detail';
         bookBtn.style.display = 'block';
         unavailableMsg.style.display = 'none';
-        availableDiv.textContent = '✅ Phòng đang sẵn sàng đón khách';
+        availableDiv.innerHTML = `<span style="display:flex;align-items:center;gap:6px;color:#22c55e;font-weight:500;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>Phòng đang sẵn sàng đón khách</span>`;
     } else {
         badge.textContent = '● ĐANG CÓ KHÁCH';
         badge.className = 'room-detail-badge status-occupied-detail';
         bookBtn.style.display = 'none';
         unavailableMsg.style.display = 'block';
         unavailableMsg.textContent = 'Phòng hiện đang có khách lưu trú';
-        availableDiv.textContent = room.availableFrom
-            ? '📅 Dự kiến trống từ: ' + room.availableFrom
+        availableDiv.innerHTML = room.availableFrom
+            ? `<span style="display:flex;align-items:center;gap:6px;color:#f59e0b;font-weight:500;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>Dự kiến trống từ: ${room.availableFrom}</span>`
             : '';
     }
 

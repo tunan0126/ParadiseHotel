@@ -160,8 +160,12 @@ async function renderAdminRooms(customData = null) {
             if (room.status === 'Đang có khách') badge = 'status-occupied';
             if (room.status === 'Đang dọn dẹp') badge = 'status-cleaning';
 
+            const suiteSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+            const deluxeSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>';
+            const standardSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+            
             const roomNameLower = (room.name || '').toLowerCase();
-            const roomEmoji = (roomNameLower.includes('suite') || roomNameLower.includes('vip')) ? '🛎️' : (roomNameLower.includes('deluxe') || roomNameLower.includes('cao cấp')) ? '🛏️' : '🏠';
+            const roomEmoji = (roomNameLower.includes('suite') || roomNameLower.includes('vip')) ? suiteSvg : (roomNameLower.includes('deluxe') || roomNameLower.includes('cao cấp')) ? deluxeSvg : standardSvg;
             const maLoai = room.maLoai || '';
 
             tbody.innerHTML += `<tr>
@@ -241,7 +245,13 @@ async function renderAdminRoomTypes(customData = null) {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:32px;">Chưa có loại phòng nào.</td></tr>';
             return;
         }
-        const typeEmojis = ['🏠', '🛏️', '🛎️', '👑', '🌟'];
+        const svgIcon1 = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+        const svgIcon2 = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>';
+        const svgIcon3 = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+        const svgIcon4 = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l5.25 5 2.625-9.167L12.5 17l5.25-5"/></svg>';
+        const svgIcon5 = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>';
+
+        const typeEmojis = [svgIcon1, svgIcon2, svgIcon3, svgIcon4, svgIcon5];
         types.forEach((type, i) => {
             const soNguoi = typeof type.maxPeople === 'string' ? type.maxPeople.replace(' Người','') : type.maxPeople;
             tbody.innerHTML += `<tr>
