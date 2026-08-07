@@ -859,6 +859,7 @@ async function attemptToBook(roomId, roomName, price) {
     
     function createModalFlatpickr(selector, opts) {
         return flatpickr(selector, {
+            disableMobile: true,
             ...opts,
             appendTo: modalElem,
             onReady: function(sDates, dStr, instance) {
@@ -1000,6 +1001,36 @@ function recalculateBooking() {
 }
 
 async function submitBooking() {
+    const checkinVal = document.getElementById('booking-checkin-input').value.trim();
+    const checkoutVal = document.getElementById('booking-checkout-input').value.trim();
+
+    // Validate: cả hai ngày phải được chọn
+    if (!checkinVal || !checkoutVal) {
+        showToast("Vui lòng chọn ngày nhận phòng và ngày trả phòng trước khi đặt!", "error");
+        // Highlight input rỗng
+        if (!checkinVal) {
+            const ci = document.getElementById('booking-checkin-input');
+            ci.style.border = '2px solid #ef4444';
+            ci.style.animation = 'shake 0.4s ease';
+            setTimeout(() => { ci.style.border = ''; ci.style.animation = ''; }, 2000);
+        }
+        if (!checkoutVal) {
+            const co = document.getElementById('booking-checkout-input');
+            co.style.border = '2px solid #ef4444';
+            co.style.animation = 'shake 0.4s ease';
+            setTimeout(() => { co.style.border = ''; co.style.animation = ''; }, 2000);
+        }
+        return;
+    }
+
+    // Validate: checkout phải sau checkin
+    const ciDate = new Date(checkinVal);
+    const coDate = new Date(checkoutVal);
+    if (coDate <= ciDate) {
+        showToast("Ngày trả phòng phải sau ngày nhận phòng!", "error");
+        return;
+    }
+
     let svcs = []; 
     document.querySelectorAll('.booking-service-cb:checked').forEach(cb => { svcs.push(cb.getAttribute('data-name')); });
     
@@ -1008,11 +1039,12 @@ async function submitBooking() {
     const bookingData = {
         username: localStorage.getItem('current_username'), 
         room_id: currentBookingRoom.id, 
-        checkin: document.getElementById('booking-checkin-input').value,
-        checkout: document.getElementById('booking-checkout-input').value,
+        checkin: checkinVal,
+        checkout: checkoutVal,
         total_price: parseFloat(totalStr), 
         services: svcs
     };
+
 
     try {
         const response = await fetch('/api/bookings', {

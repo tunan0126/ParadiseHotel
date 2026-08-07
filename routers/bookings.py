@@ -28,12 +28,18 @@ async def create_booking(data: BookingModel):
             
         ma_ddp = "DDP" + str(max_id + 1)
         
+        if not data.checkin or not data.checkin.strip() or not data.checkout or not data.checkout.strip():
+            raise HTTPException(status_code=400, detail="Vui lòng chọn ngày nhận phòng và ngày trả phòng")
+        
         try:
             ngay_dat = datetime.datetime.fromisoformat(data.checkin)
             ngay_tra = datetime.datetime.fromisoformat(data.checkout)
         except Exception:
-            ngay_dat = datetime.datetime.now()
-            ngay_tra = ngay_dat + datetime.timedelta(days=1)
+            raise HTTPException(status_code=400, detail="Ngày nhận phòng hoặc ngày trả phòng không hợp lệ")
+        
+        if ngay_tra <= ngay_dat:
+            raise HTTPException(status_code=400, detail="Ngày trả phòng phải sau ngày nhận phòng")
+
 
         dich_vu_list = []
         for svc_name in data.services:
