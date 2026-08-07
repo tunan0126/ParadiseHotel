@@ -1049,7 +1049,7 @@ function updateBookingTotal() {
     document.getElementById('booking-total-price').innerText = grandTotal.toLocaleString('vi-VN') + ' VND';
 }
 
-function closeBookingModal() { document.getElementById('booking-modal').close(); }
+function closeBookingModal() { document.getElementById('booking-modal').style.display = 'none'; }
 
 function switchProfileTab(tabName) {
     document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
@@ -2073,6 +2073,7 @@ window.addEventListener('click', function(e) {
     if (e.target.id === 'login-modal') closeLoginModal();
     if (e.target.id === 'register-modal') closeRegisterModal();
     if (e.target.id === 'modal-room-detail') closeRoomDetail();
+    if (e.target.id === 'booking-modal') closeBookingModal();
 });
 
 // Smart header logic (hide on scroll down, show on scroll up)
