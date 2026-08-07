@@ -946,23 +946,30 @@ async function attemptToBook(roomId, roomName, price) {
         const response = await fetch('/api/admin/services');
         const activeServices = await response.json(); 
         sList.innerHTML = '';
-        activeServices.forEach(s => {
-            sList.innerHTML += `
-                <label class="service-item-card">
-                    <input type="checkbox" class="booking-service-cb hidden-cb" value="${s.price}" data-name="${s.name}" onchange="updateBookingTotal()">
-                    <div class="svc-card-content">
-                        <div class="svc-left">
-                            <div class="svc-checkbox-custom"></div>
-                            <span class="svc-name">${s.name}</span>
+        if (Array.isArray(activeServices)) {
+            activeServices.forEach(s => {
+                sList.innerHTML += `
+                    <label class="service-item-card">
+                        <input type="checkbox" class="booking-service-cb hidden-cb" value="${s.price}" data-name="${s.name}" onchange="updateBookingTotal()">
+                        <div class="svc-card-content">
+                            <div class="svc-left">
+                                <div class="svc-checkbox-custom"></div>
+                                <span class="svc-name">${s.name}</span>
+                            </div>
+                            <span class="svc-price">+${s.price.toLocaleString('vi-VN')} đ</span>
                         </div>
-                        <span class="svc-price">+${s.price.toLocaleString('vi-VN')} đ</span>
-                    </div>
-                </label>
-            `;
-        });
+                    </label>
+                `;
+            });
+        } else {
+            sList.innerHTML = '<p style="font-size:13px; color:#ef4444;">Không thể tải dịch vụ lúc này.</p>';
+        }
+    } catch(e) { 
+        sList.innerHTML = '<p style="font-size:13px; color:#ef4444;">Không thể tải dịch vụ lúc này.</p>';
+    } finally {
         updateBookingTotal();
         document.getElementById('booking-modal').showModal();
-    } catch(e) { showToast("Không tải được dịch vụ!", "error"); }
+    }
 }
 function recalculateBooking() {
     let ciVal = document.getElementById('booking-checkin-input').value;
