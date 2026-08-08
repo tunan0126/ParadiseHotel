@@ -609,11 +609,16 @@ async function renderRooms(roomsToRender = null) {
     const container = document.getElementById("room-container");
     if(!container) return;
 
-    container.innerHTML = `
-        <div class="room-skeleton"></div>
-        <div class="room-skeleton"></div>
-        <div class="room-skeleton"></div>
-    `;
+    const hasExistingRooms = container.querySelectorAll('.room-card').length > 0;
+    const isSearch = roomsToRender !== null;
+
+    if (!hasExistingRooms || isSearch) {
+        container.innerHTML = `
+            <div class="room-skeleton"></div>
+            <div class="room-skeleton"></div>
+            <div class="room-skeleton"></div>
+        `;
+    }
     
     try {
         let displayRooms = roomsToRender;
@@ -699,13 +704,19 @@ async function renderRooms(roomsToRender = null) {
             if (imgWrap && displayRooms[i]) {
                 imgWrap.addEventListener('click', () => openRoomDetail(displayRooms[i]));
             }
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(24px)';
-            setTimeout(() => {
-                card.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s, border-color 0.3s';
+            
+            if (!hasExistingRooms || isSearch) {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(24px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s, border-color 0.3s';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, i * 90 + 80);
+            } else {
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0)';
-            }, i * 90 + 80);
+            }
         });
 
     } catch (error) { 
