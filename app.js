@@ -707,15 +707,15 @@ async function renderRooms(roomsToRender = null) {
             
             if (!hasExistingRooms || isSearch) {
                 card.style.opacity = '0';
-                card.style.transform = 'translateY(24px)';
+                card.style.transform = 'translate(-24px, -24px)';
                 setTimeout(() => {
-                    card.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s, border-color 0.3s';
+                    card.style.transition = 'opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s, border-color 0.3s';
                     card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
+                    card.style.transform = 'translate(0, 0)';
                 }, i * 90 + 80);
             } else {
                 card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
+                card.style.transform = 'translate(0, 0)';
             }
         });
 
