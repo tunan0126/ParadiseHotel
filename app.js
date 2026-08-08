@@ -708,11 +708,13 @@ async function renderRooms(roomsToRender = null) {
             if (!hasExistingRooms || isSearch) {
                 card.style.opacity = '0';
                 card.style.transform = 'translate(-24px, -24px)';
+                // Speed up stagger significantly: cap max delay, reduce per-card delay
+                const delay = Math.min(i * 30, 400); 
                 setTimeout(() => {
-                    card.style.transition = 'opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s, border-color 0.3s';
+                    card.style.transition = 'opacity 0.4s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s, border-color 0.3s';
                     card.style.opacity = '1';
                     card.style.transform = 'translate(0, 0)';
-                }, i * 90 + 80);
+                }, delay + 20);
             } else {
                 card.style.opacity = '1';
                 card.style.transform = 'translate(0, 0)';
