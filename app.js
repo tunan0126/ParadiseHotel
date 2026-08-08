@@ -166,8 +166,8 @@ async function register() {
 function checkInitialState() {
     if (localStorage.getItem('is_logged_in') === 'true') {
         if (localStorage.getItem('current_role') === 'admin') window.location.href = 'admin.html';
-        else { showAboutPage(); updateHeaderUI(); }
-    } else { showAboutPage(); updateHeaderUI(); }
+        else { showHomePage(); updateHeaderUI(); }
+    } else { showHomePage(); updateHeaderUI(); }
 }
 
 function updateHeaderUI() {
