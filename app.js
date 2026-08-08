@@ -206,6 +206,8 @@ function hideAllScreens() {
     
     const toggleBtn = document.getElementById('search-bar-toggle-btn');
     if (toggleBtn) toggleBtn.style.display = '';
+
+    window.scrollTo(0, 0);
 }
 
 function showHomePage() { hideAllScreens(); document.getElementById('customer-view').style.display = 'block'; document.getElementById('home-screen').style.display = 'block'; const sb = document.getElementById('search-bar'); if (sb) sb.style.display = 'flex'; renderRooms(); }
@@ -1765,6 +1767,11 @@ if (document.readyState === 'loading') {
     initSearchChoices();
     initSearchFields();
 }
+
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+window.scrollTo(0, 0);
 
 initData(); 
 renderRooms(); 
