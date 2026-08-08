@@ -1141,7 +1141,8 @@ async function updateProfile() {
 async function loadBookingHistory(isPolling = false) {
     let username = localStorage.getItem('current_username');
     const tbody = document.getElementById('history-tbody'); 
-    if (!isPolling) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;"><div class="data-loader"></div>Đang truy vấn...</td></tr>';
+    const hasData = tbody.innerHTML.trim() !== '' && !tbody.innerHTML.includes('data-loader') && !tbody.innerHTML.includes('Lỗi kết nối');
+    if (!isPolling && !hasData) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;"><div class="data-loader"></div>Đang truy vấn...</td></tr>';
     try {
         const res = await fetch(`/api/profile/history?username=${username}`);
         const history = await res.json(); 
@@ -1160,14 +1161,22 @@ async function loadBookingHistory(isPolling = false) {
 
 async function loadUsedServices() {
     let username = localStorage.getItem('current_username');
-    const tbody = document.getElementById('services-tbody'); if(!tbody) return; tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;"><div class="data-loader"></div>Đang truy vấn...</td></tr>';
+    const tbody = document.getElementById('services-tbody'); if(!tbody) return; 
+    const hasData = tbody.innerHTML.trim() !== '' && !tbody.innerHTML.includes('data-loader') && !tbody.innerHTML.includes('Lỗi kết nối');
+    if (!hasData) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;"><div class="data-loader"></div>Đang truy vấn...</td></tr>';
     try {
         const res = await fetch(`/api/profile/services?username=${username}`);
-        const svcs = await res.json(); tbody.innerHTML = '';
-        if(svcs.length === 0) return tbody.innerHTML = `<tr><td colspan="5">Bạn chưa sử dụng dịch vụ đi kèm nào.</td></tr>`;
-        svcs.forEach(s => {
-            tbody.innerHTML += `<tr><td><strong>${s.id}</strong></td><td>${s.serviceName}</td><td>${s.date}</td><td>${s.quantity}</td><td>${s.total.toLocaleString()}đ</td></tr>`;
-        });
+        const svcs = await res.json(); 
+        
+        let newHTML = '';
+        if(svcs.length === 0) newHTML = `<tr><td colspan="5">Bạn chưa sử dụng dịch vụ đi kèm nào.</td></tr>`;
+        else {
+            svcs.forEach(s => {
+                newHTML += `<tr><td><strong>${s.id}</strong></td><td>${s.serviceName}</td><td>${s.date}</td><td>${s.quantity}</td><td>${s.total.toLocaleString()}đ</td></tr>`;
+            });
+        }
+        
+        if (tbody.innerHTML !== newHTML) tbody.innerHTML = newHTML;
     } catch(e) { tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Lỗi kết nối.</td></tr>'; }
 }
 
