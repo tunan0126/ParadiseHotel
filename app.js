@@ -1141,7 +1141,7 @@ async function updateProfile() {
 async function loadBookingHistory(isPolling = false) {
     let username = localStorage.getItem('current_username');
     const tbody = document.getElementById('history-tbody'); 
-    if (!isPolling) tbody.innerHTML = 'Đang truy vấn...';
+    if (!isPolling) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;"><div class="data-loader"></div>Đang truy vấn...</td></tr>';
     try {
         const res = await fetch(`/api/profile/history?username=${username}`);
         const history = await res.json(); 
@@ -1155,12 +1155,12 @@ async function loadBookingHistory(isPolling = false) {
         }
         
         if (tbody.innerHTML !== newHTML) tbody.innerHTML = newHTML;
-    } catch(e) { if (!isPolling) tbody.innerHTML = 'Lỗi kết nối.'; }
+    } catch(e) { if (!isPolling) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Lỗi kết nối.</td></tr>'; }
 }
 
 async function loadUsedServices() {
     let username = localStorage.getItem('current_username');
-    const tbody = document.getElementById('services-tbody'); if(!tbody) return; tbody.innerHTML = 'Đang truy vấn...';
+    const tbody = document.getElementById('services-tbody'); if(!tbody) return; tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;"><div class="data-loader"></div>Đang truy vấn...</td></tr>';
     try {
         const res = await fetch(`/api/profile/services?username=${username}`);
         const svcs = await res.json(); tbody.innerHTML = '';
@@ -1168,7 +1168,7 @@ async function loadUsedServices() {
         svcs.forEach(s => {
             tbody.innerHTML += `<tr><td><strong>${s.id}</strong></td><td>${s.serviceName}</td><td>${s.date}</td><td>${s.quantity}</td><td>${s.total.toLocaleString()}đ</td></tr>`;
         });
-    } catch(e) { tbody.innerHTML = 'Lỗi kết nối.'; }
+    } catch(e) { tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Lỗi kết nối.</td></tr>'; }
 }
 
 async function changePassword() {

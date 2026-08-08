@@ -2520,3 +2520,6 @@ body {
     60% { transform: translateX(-4px); }
     80% { transform: translateX(4px); }
 }
+
+.data-loader { width: 32px; height: 32px; border: 3px solid rgba(184, 134, 11, 0.2); border-top-color: #b8860b; border-radius: 50%; animation: spinLoader 0.8s linear infinite; margin: 0 auto 10px auto; }
+@keyframes spinLoader { to { transform: rotate(360deg); } }
