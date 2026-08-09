@@ -2757,7 +2757,7 @@ body {
 }
 
 @media (max-width: 768px) {
-    body, html { overflow-x: hidden; }
+    body { overflow-x: hidden; }
     .hero-stats { flex-wrap: wrap; padding: 10px; position: absolute; bottom: 0; left: 0; right: 0; }
     .hero-stat { flex: 1 1 45%; margin-bottom: 10px; }
     .hero-stat-divider { display: none; }
