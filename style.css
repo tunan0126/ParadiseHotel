@@ -2534,3 +2534,198 @@ body {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
 }
+/* ========================================= */
+/* MOBILE RESPONSIVE QUERIES                 */
+/* ========================================= */
+@media (max-width: 768px) {
+    /* 1. HEADER & NAVIGATION */
+    .header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .logo {
+        transform: scale(0.8);
+        transform-origin: center;
+    }
+    .nav-menu {
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+        font-size: 11px;
+    }
+
+    /* 2. HERO & BOOKING BAR */
+    .hero-banner {
+        padding-top: 120px;
+    }
+    .hero-banner h1 {
+        font-size: 40px;
+        line-height: 1.2;
+    }
+    .hero-banner h2 {
+        font-size: 16px;
+    }
+    .rv-hero h1 {
+        font-size: 36px;
+    }
+    .booking-bar {
+        flex-direction: column;
+        padding: 20px;
+        gap: 20px;
+        align-items: stretch;
+    }
+    .booking-group {
+        border-right: none;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding-bottom: 15px;
+        padding-right: 0;
+    }
+    .booking-btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    /* 3. ROOM & SERVICE GRID */
+    .room-section {
+        padding: 60px 20px;
+    }
+    .room-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .room-card-img-wrap {
+        height: 250px;
+    }
+
+    /* 4. REVIEWS & FORMS */
+    .rv-form-section, .rv-list-section {
+        padding: 40px 20px;
+    }
+    .rv-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+    .rv-stats-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    .rv-stat-box {
+        width: 100%;
+        max-width: 300px;
+    }
+    .rv-item {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        text-align: center;
+    }
+    .rv-avatar {
+        margin: 0 auto;
+    }
+    .rv-item-head {
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+    .rv-item-scores {
+        justify-content: center;
+    }
+
+    /* 5. MODALS */
+    .modal-content, .admin-modal-content {
+        width: 95% !important;
+        margin: 20px auto;
+        max-height: 85vh;
+    }
+    .room-detail-body {
+        grid-template-columns: 1fr !important;
+        padding: 20px !important;
+    }
+    .room-detail-right {
+        align-items: flex-start !important;
+    }
+    .room-detail-right .book-btn {
+        width: 100%;
+    }
+    .booking-content-layout {
+        flex-direction: column;
+        padding: 20px;
+    }
+    .booking-left-col {
+        min-width: 100%;
+    }
+    .admin-form-row {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* 6. ADMIN & FOOTER */
+    .footer-top {
+        grid-template-columns: 1fr !important;
+        gap: 30px;
+        text-align: center;
+    }
+    .footer-col h4::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .footer-social {
+        justify-content: center;
+    }
+    .admin-layout {
+        flex-direction: column;
+    }
+    .admin-sidebar-nav {
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 15px;
+    }
+    .admin-nav-item {
+        white-space: nowrap;
+        padding: 10px 15px;
+        margin-bottom: 0;
+        margin-right: 10px;
+    }
+    .admin-logo {
+        display: none;
+    }
+    .admin-main-content {
+        padding: 20px;
+        overflow-x: hidden;
+    }
+    .admin-stats-row {
+        grid-template-columns: 1fr 1fr;
+    }
+    .admin-table-container {
+        overflow-x: auto;
+    }
+    .admin-table {
+        min-width: 800px;
+    }
+    .admin-header-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    /* PROFILE SCREEN */
+    .profile-tabs {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .admin-stats-row {
+        grid-template-columns: 1fr;
+    }
+    .hero-banner h1 {
+        font-size: 32px;
+    }
+    .room-card-img-wrap {
+        height: 200px;
+    }
+}
