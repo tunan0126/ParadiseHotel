@@ -5,7 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 SETTINGS_FILE = "settings.json"
 # Placeholder for Cloud MongoDB URI
-MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://tuananh:123@cluster0.btcad6s.mongodb.net/hotel_db?retryWrites=true&w=majority&appName=Cluster0")
+MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://adminhotel:123@cluster0.btcad6s.mongodb.net/hotel_db?retryWrites=true&w=majority&appName=Cluster0")
 DATABASE_NAME = "hotel_db"
 
 client = None

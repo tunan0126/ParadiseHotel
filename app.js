@@ -550,10 +550,20 @@ function getServiceImage(name, idx) {
 
 async function renderCustomerServices() {
     const container = document.getElementById('service-list'); if (!container) return;
-    container.innerHTML = `<div class="room-skeleton"></div><div class="room-skeleton"></div><div class="room-skeleton"></div>`;
+    
+    if (!window.cachedCustomerServices) {
+        container.innerHTML = `<div class="room-skeleton"></div><div class="room-skeleton"></div><div class="room-skeleton"></div>`;
+    }
+    
     try {
-        const response = await fetch('/api/admin/services');
-        const services = await response.json();
+        let services;
+        if (window.cachedCustomerServices) {
+            services = window.cachedCustomerServices;
+        } else {
+            const response = await fetch('/api/admin/services');
+            services = await response.json();
+            window.cachedCustomerServices = services;
+        }
 
         if (!services.length) {
             container.innerHTML = `
@@ -565,7 +575,7 @@ async function renderCustomerServices() {
         }
 
         container.innerHTML = services.map((s, idx) => `
-            <div class="room-card">
+            <div class="room-card animate-stagger" style="animation-delay: ${idx * 0.08}s">
                 <div class="room-card-img-wrap">
                     <span class="status-badge status-category">${s.category || 'Tiện ích'}</span>
                     <span class="room-card-num">HUCE Hotel</span>
@@ -609,10 +619,9 @@ async function renderRooms(roomsToRender = null) {
     const container = document.getElementById("room-container");
     if(!container) return;
 
-    const hasExistingRooms = container.querySelectorAll('.room-card').length > 0;
     const isSearch = roomsToRender !== null;
 
-    if (!hasExistingRooms || isSearch) {
+    if (!window.cachedCustomerRooms && !isSearch) {
         container.innerHTML = `
             <div class="room-skeleton"></div>
             <div class="room-skeleton"></div>
@@ -623,9 +632,14 @@ async function renderRooms(roomsToRender = null) {
     try {
         let displayRooms = roomsToRender;
         if (!displayRooms) {
-            const username = localStorage.getItem('current_username') || '';
-            const response = await fetch(`/api/rooms?username=${username}`);
-            displayRooms = await response.json();
+            if (window.cachedCustomerRooms) {
+                displayRooms = window.cachedCustomerRooms;
+            } else {
+                const username = localStorage.getItem('current_username') || '';
+                const response = await fetch(`/api/rooms?username=${username}`);
+                displayRooms = await response.json();
+                window.cachedCustomerRooms = displayRooms;
+            }
         }
         
         displayRooms.forEach(r => { if(r.name) r.name = window.translateRoomName(r.name); });
@@ -650,7 +664,6 @@ async function renderRooms(roomsToRender = null) {
             "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80",
             "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1200&q=80"
         ];
-        const bentoClasses = ['bento-large', 'bento-tall', 'bento-small', 'bento-wide', 'bento-small', 'bento-small'];
 
         displayRooms.forEach((room, idx) => {
             let badgeHTML = '';
@@ -678,7 +691,7 @@ async function renderRooms(roomsToRender = null) {
             const imageSrc = luxuryImages[idx % luxuryImages.length];
 
             tempDiv.innerHTML = `
-                <div class="room-card" style="${cardExtraStyle}">
+                <div class="room-card animate-stagger" style="${cardExtraStyle}; animation-delay: ${idx * 0.08}s">
                     <div class="room-card-img-wrap">
                         ${badgeHTML}
                         <span class="room-card-num">Phòng ${room.roomNumber}</span>
@@ -1068,6 +1081,7 @@ async function submitBooking() {
         if (response.ok) {
             showToast(`Đặt phòng thành công! Cảm ơn quý khách đã tin tưởng HUCE Hotel.`, "success"); 
             closeBookingModal(); 
+            window.cachedCustomerRooms = null;
             renderRooms(); 
         } else { showToast("Có lỗi xảy ra trong quá trình xử lý đặt phòng. Vui lòng thử lại.", "error"); }
     } catch (e) { showToast("Hệ thống đang bận. Vui lòng thử lại sau.", "error"); }

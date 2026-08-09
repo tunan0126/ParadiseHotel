@@ -30,6 +30,8 @@ async def get_init():
     except Exception as e:
         return {"rooms": [], "settings": {}, "services": []}
 
+from fastapi.staticfiles import StaticFiles
+
 app.include_router(auth.router)
 app.include_router(rooms.router)
 app.include_router(bookings.router)
@@ -37,6 +39,9 @@ app.include_router(profile.router)
 app.include_router(reviews.router)
 app.include_router(admin.public_router)
 app.include_router(admin.router)
+
+# Phục vụ files tĩnh của frontend ở thư mục gốc
+app.mount("/", StaticFiles(directory=".", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
