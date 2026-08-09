@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
 
 :root {
     color-scheme: light dark;
@@ -371,7 +371,7 @@ body {
 
     
     .room-card-img-wrap::after {
-        content: 'XEM PHÒNG';
+        content: 'XEM PHÃ’NG';
         position: absolute; inset: 0; z-index: 4;
         display: flex; align-items: center; justify-content: center;
         font-size: 8px; font-weight: 700; letter-spacing: 3px;
@@ -1001,7 +1001,7 @@ body {
 
     
     .profile-sidebar-top::after {
-        content: '✦';
+        content: 'âœ¦';
         display: block;
         color: rgba(212,175,55,0.35);
         font-size: 14px;
@@ -1402,13 +1402,13 @@ body {
     
     .badge, .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; letter-spacing: 0.3px; }
     .status-ready { background-color: #dcfce7; color: #15803d; }
-    .status-ready::before { content: '•'; font-size: 16px; line-height: 1; }
+    .status-ready::before { content: 'â€¢'; font-size: 16px; line-height: 1; }
     .status-occupied { background-color: #fef9c3; color: #a16207; }
-    .status-occupied::before { content: '•'; font-size: 16px; line-height: 1; }
+    .status-occupied::before { content: 'â€¢'; font-size: 16px; line-height: 1; }
     .status-cleaning { background-color: #fee2e2; color: #b91c1c; }
-    .status-cleaning::before { content: '•'; font-size: 16px; line-height: 1; }
+    .status-cleaning::before { content: 'â€¢'; font-size: 16px; line-height: 1; }
     .status-active { background-color: #dcfce7; color: #15803d; }
-    .status-active::before { content: '•'; font-size: 16px; line-height: 1; }
+    .status-active::before { content: 'â€¢'; font-size: 16px; line-height: 1; }
     .status-inactive { background-color: #f1f5f9; color: #64748b; }
     .confirmed { background-color: #e0f3ff; color: #0369a1; }
     .completed { background-color: #dcfce7; color: #15803d; }
@@ -1560,15 +1560,15 @@ body {
         transition: all 0.4s cubic-bezier(0.25, 1.2, 0.35, 1);
     }
     .rv-hero-title::after {
-        content: "👉 Bấm để xem";
+        content: "ðŸ‘‰ Báº¥m Ä‘á»ƒ xem";
         position: absolute; bottom: -32px; left: 50%; transform: translateX(-50%);
         font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700;
         color: #d4af37; letter-spacing: 2px; opacity: 0;
         transition: all 0.3s ease; text-transform: uppercase;
         pointer-events: none;
     }
-    #rv-hero .rv-hero-title::after { content: "✍️ Viết Đánh Giá"; }
-    #svc-hero .rv-hero-title::after { content: "✨ Khám Phá"; }
+    #rv-hero .rv-hero-title::after { content: "âœï¸ Viáº¿t ÄÃ¡nh GiÃ¡"; }
+    #svc-hero .rv-hero-title::after { content: "âœ¨ KhÃ¡m PhÃ¡"; }
     
     .rv-hero-title:hover { 
         transform: translateY(-6px) scale(1.02);
@@ -1765,7 +1765,7 @@ body {
     .rv-submit-btn.rv-loading .rv-submit-spinner { display: inline-block; }
     .rv-submit-btn.rv-loading .rv-submit-icon { display: none; }
     .rv-submit-btn.rv-loading .rv-submit-text { font-size: 0; }
-    .rv-submit-btn.rv-loading .rv-submit-text::after { content: "Đang gửi..."; font-size: 13px; }
+    .rv-submit-btn.rv-loading .rv-submit-text::after { content: "Äang gá»­i..."; font-size: 13px; }
     .rv-submit-btn.rv-success { background: #2e8b3d; }
     .rv-submit-btn.rv-success .rv-submit-spinner { display: none; }
     .rv-submit-btn.rv-success .rv-submit-icon { display: inline-flex; animation: rvPopIcon 0.4s cubic-bezier(0.34,1.56,0.64,1); }
@@ -1869,10 +1869,10 @@ body {
         border: none !important; font-size: 9px; line-height: 1;
     }
     .flatpickr-current-month .numInputWrapper span.arrowUp::after {
-        content: "▲" !important;
+        content: "â–²" !important;
     }
     .flatpickr-current-month .numInputWrapper span.arrowDown::after {
-        content: "▼" !important;
+        content: "â–¼" !important;
     }
     .flatpickr-current-month .numInputWrapper span.arrowDown:hover::after,
     .flatpickr-current-month .numInputWrapper span.arrowUp:hover::after {
@@ -2813,7 +2813,7 @@ body {
 }
 @media (max-width: 768px) {
     body, html {
-        overflow-x: hidden; /* Fix kho?ng tr?ng b�n ph?i */
+        overflow-x: hidden; /* Fix kho?ng tr?ng bên ph?i */
     }
     .search-bar-container {
         position: relative !important;
