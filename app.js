@@ -172,23 +172,27 @@ function checkInitialState() {
 
 function updateHeaderUI() {
     const isLoggedIn = localStorage.getItem('is_logged_in');
-    const avatar = document.getElementById('user-avatar');
+    const profileBtn = document.getElementById('nav-profile-btn');
     const loginBtn = document.getElementById('nav-login-btn');
+    const logoutBtn = document.getElementById('nav-logout-btn');
+    
     if (isLoggedIn === 'true') {
-        loginBtn.style.display = 'none';
-        loginBtn.classList.remove('btn-fade-in');
-        avatar.innerHTML = (localStorage.getItem('current_user') || 'U').charAt(0).toUpperCase();
-        avatar.style.background = 'linear-gradient(135deg, #b8860b, #d4af37, #f5e09a)';
-        avatar.style.color = '#5c3d00';
-        avatar.style.display = 'flex';
+        if(loginBtn) loginBtn.style.display = 'none';
+        if(profileBtn) {
+            const username = localStorage.getItem('current_user') || 'Người dùng';
+            profileBtn.innerText = username;
+            profileBtn.setAttribute('data-text', username);
+            profileBtn.style.display = 'inline-block';
+        }
+        if(logoutBtn) logoutBtn.style.display = 'inline-block';
     } else {
-        loginBtn.style.display = 'block';
-        void loginBtn.offsetWidth;
-        loginBtn.classList.add('btn-fade-in');
-        avatar.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#8b6508" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
-        avatar.style.background = 'rgba(180,140,20,0.08)';
-        avatar.style.color = '#8b6508';
-        avatar.style.display = 'flex';
+        if(loginBtn) {
+            loginBtn.style.display = 'inline-block';
+            void loginBtn.offsetWidth;
+            loginBtn.classList.add('btn-fade-in');
+        }
+        if(profileBtn) profileBtn.style.display = 'none';
+        if(logoutBtn) logoutBtn.style.display = 'none';
     }
 }
 
