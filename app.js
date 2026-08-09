@@ -578,12 +578,16 @@ async function renderCustomerServices() {
             const row = Math.floor(idx / 3);
             const col = idx % 3;
             const delay = (row + col) * 0.1;
+            const priorityAttr = idx === 0 ? 'fetchpriority="high" loading="eager"' : 
+                                 idx < 3 ? 'fetchpriority="auto" loading="eager"' : 
+                                 'fetchpriority="low" loading="lazy"';
+
             return `
             <div class="room-card animate-stagger" style="animation-delay: ${delay}s">
                 <div class="room-card-img-wrap">
                     <span class="status-badge status-category">${s.category || 'Tiện ích'}</span>
                     <span class="room-card-num">HUCE Hotel</span>
-                    <img loading="lazy" src="${getServiceImage(s.name, idx)}" alt="${s.name}" loading="lazy">
+                    <img src="${getServiceImage(s.name, idx)}" alt="${s.name}" ${priorityAttr} decoding="async">
                 </div>
                 <div class="room-card-body">
                     <p class="room-card-type">Dịch vụ cao cấp</p>
@@ -698,12 +702,16 @@ async function renderRooms(roomsToRender = null) {
             const col = idx % 3;
             const delay = (row + col) * 0.1;
 
+            const priorityAttr = idx === 0 ? 'fetchpriority="high" loading="eager"' : 
+                                 idx < 3 ? 'fetchpriority="auto" loading="eager"' : 
+                                 'fetchpriority="low" loading="lazy"';
+
             tempDiv.innerHTML = `
                 <div class="room-card animate-stagger" style="${cardExtraStyle}; animation-delay: ${delay}s">
                     <div class="room-card-img-wrap">
                         ${badgeHTML}
                         <span class="room-card-num">Phòng ${room.roomNumber}</span>
-                        <img loading="lazy" src="${imageSrc}" alt="${room.name}" loading="lazy" decoding="async">
+                        <img src="${imageSrc}" alt="${room.name}" ${priorityAttr} decoding="async">
                     </div>
                     <div class="room-card-body">
                         <p class="room-card-type">${typeLabel}</p>
