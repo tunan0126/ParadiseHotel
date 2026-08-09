@@ -2772,3 +2772,42 @@ body {
         align-items: center;
     }
 }
+@media (max-width: 768px) {
+    /* HOME SCREEN DETAILED FIXES */
+    .hero-stats {
+        flex-wrap: wrap;
+        padding: 10px;
+        position: relative; /* Bring it up if it overflows */
+    }
+    .hero-stat {
+        flex: 1 1 45%;
+        margin-bottom: 10px;
+    }
+    .hero-stat-divider {
+        display: none;
+    }
+    .search-bar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 15px;
+        gap: 15px;
+    }
+    .search-field {
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding-bottom: 10px;
+    }
+    .search-field:last-of-type {
+        border-bottom: none;
+    }
+    .search-btn {
+        width: 100%;
+        padding: 15px;
+        margin-top: 10px;
+    }
+    .guest-popover {
+        width: 100%;
+        min-width: 280px;
+    }
+}
