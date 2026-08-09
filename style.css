@@ -2541,12 +2541,13 @@ body {
     /* 1. HEADER & NAVIGATION */
     .header {
         padding: 15px 20px;
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
     }
     .logo {
-        transform: scale(0.8);
-        transform-origin: center;
+        transform: scale(0.85);
+        transform-origin: left center;
     }
     .nav-menu {
         gap: 20px;
