@@ -603,7 +603,7 @@ async function renderCustomerServices() {
                     </div>
                 </div>
             </div>
-        `).join('');
+        `}).join('');
 
         container.querySelectorAll('.room-card').forEach((card, i) => {
             card.style.opacity = '0';
