@@ -737,7 +737,10 @@ async function renderRooms(roomsToRender = null) {
     } catch (error) { 
         container.innerHTML = `
             <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#c0392b;">
-                <p style="font-size:13px;">⚠ Lỗi kết nối CSDL — Kiểm tra file <code>main.py</code> và SQL Server</p>
+                <p style="font-size:14px; font-weight:bold;">⚠ Lỗi kết nối CSDL hoặc API Server</p>
+                <p style="font-size:13px; margin-top:8px;">Nếu chạy trên Vercel: Vui lòng vào MongoDB Atlas -> Network Access -> Thêm IP <b>0.0.0.0/0</b></p>
+                <p style="font-size:13px;">Nếu chạy Local: Hãy chắc chắn bạn đang truy cập qua http://localhost:8000 (không dùng Live Server 5500).</p>
+                <p style="font-size:12px; margin-top:10px; color:#888;">Chi tiết lỗi: ${error.message}</p>
             </div>`;
     }
 }
