@@ -2845,13 +2845,13 @@ body {
         height: 2px;
         background: var(--gold-primary);
         border-radius: 10px;
-        transition: all 0.3s linear;
+        transition: all 0.3s ease;
         position: relative;
-        transform-origin: 1px;
+        transform-origin: center;
     }
-    .hamburger-btn.active span:nth-child(1) { transform: rotate(45deg); }
-    .hamburger-btn.active span:nth-child(2) { opacity: 0; transform: translateX(20px); }
-    .hamburger-btn.active span:nth-child(3) { transform: rotate(-45deg); }
+    .hamburger-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+    .hamburger-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     
     .nav-menu {
         position: absolute;
