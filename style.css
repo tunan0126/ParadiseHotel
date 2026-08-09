@@ -2811,3 +2811,20 @@ body {
         min-width: 280px;
     }
 }
+@media (max-width: 768px) {
+    body, html {
+        overflow-x: hidden; /* Fix kho?ng tr?ng bên ph?i */
+    }
+    .search-bar-container {
+        position: relative !important;
+        transform: none !important;
+        bottom: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        margin-top: -30px;
+        z-index: 10;
+    }
+    .search-bar-container.search-bar-hidden {
+        transform: none !important;
+    }
+}

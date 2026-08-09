@@ -2178,3 +2178,14 @@ window.addEventListener('scroll', () => {
     
     lastScrollY = currentScrollY;
 });
+
+// Di chuy?n thanh tìm ki?m lên du?i Hero Banner trên Mobile
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.innerWidth <= 768) {
+        const searchBarContainer = document.getElementById('search-bar');
+        const heroBanner = document.getElementById('hero-banner');
+        if (searchBarContainer && heroBanner) {
+            heroBanner.insertAdjacentElement('afterend', searchBarContainer);
+        }
+    }
+});
