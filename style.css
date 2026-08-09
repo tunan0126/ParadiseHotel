@@ -2526,11 +2526,11 @@ body {
 
 .animate-stagger {
     opacity: 0;
-    transform: translate(-30px, -30px);
+    transform: translateY(30px);
     animation: staggerEntrance 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes staggerEntrance {
-    from { opacity: 0; transform: translate(-30px, -30px); }
-    to { opacity: 1; transform: translate(0, 0); }
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }

@@ -574,8 +574,12 @@ async function renderCustomerServices() {
             return;
         }
 
-        container.innerHTML = services.map((s, idx) => `
-            <div class="room-card animate-stagger" style="animation-delay: ${idx * 0.08}s">
+        container.innerHTML = services.map((s, idx) => {
+            const row = Math.floor(idx / 3);
+            const col = idx % 3;
+            const delay = (row + col) * 0.1;
+            return `
+            <div class="room-card animate-stagger" style="animation-delay: ${delay}s">
                 <div class="room-card-img-wrap">
                     <span class="status-badge status-category">${s.category || 'Tiện ích'}</span>
                     <span class="room-card-num">HUCE Hotel</span>
@@ -690,8 +694,12 @@ async function renderRooms(roomsToRender = null) {
                             
             const imageSrc = luxuryImages[idx % luxuryImages.length];
 
+            const row = Math.floor(idx / 3);
+            const col = idx % 3;
+            const delay = (row + col) * 0.1;
+
             tempDiv.innerHTML = `
-                <div class="room-card animate-stagger" style="${cardExtraStyle}; animation-delay: ${idx * 0.08}s">
+                <div class="room-card animate-stagger" style="${cardExtraStyle}; animation-delay: ${delay}s">
                     <div class="room-card-img-wrap">
                         ${badgeHTML}
                         <span class="room-card-num">Phòng ${room.roomNumber}</span>
