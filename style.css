@@ -2864,17 +2864,17 @@ body {
         padding: 20px;
         gap: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-        transition: clip-path 0.4s ease-in-out, opacity 0.4s;
+        transition: all 0.3s ease;
         z-index: 1000;
-        display: flex !important; /* Override inline styles if any */
+        display: flex !important;
         opacity: 0;
-        pointer-events: none;
+        visibility: hidden;
+        transform: translateY(-20px);
     }
     .nav-menu.active {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
         opacity: 1;
-        pointer-events: auto;
+        visibility: visible;
+        transform: translateY(0);
     }
     .nav-link { font-size: 16px; padding: 10px; }
     .login-btn-header { width: 100%; max-width: 200px; text-align: center; }

@@ -2190,11 +2190,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Hamburger menu logic
-document.addEventListener('DOMContentLoaded', () => {
+(function initHamburger() {
     const hamburger = document.getElementById('hamburger-btn');
     const navMenu = document.querySelector('.nav-menu');
     if (hamburger && navMenu) {
-        hamburger.addEventListener('click', () => {
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent document click from closing it instantly
             hamburger.classList.toggle('active');
             navMenu.classList.toggle('active');
         });
@@ -2214,4 +2215,4 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-});
+})();
