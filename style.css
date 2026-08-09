@@ -2859,10 +2859,10 @@ body {
         left: 0;
         right: 0;
         background: var(--bg-main);
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-        gap: 20px;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding: 25px 30px;
+        gap: 25px !important;
         box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         transition: all 0.3s ease;
         z-index: 1000;
@@ -2871,6 +2871,9 @@ body {
         visibility: hidden;
         transform: translateY(-20px);
     }
+    .nav-menu .nav-link { width: 100%; text-align: left; padding: 10px 0; font-size: 13px; border-bottom: 1px solid rgba(180,140,20,0.2); }
+    .nav-menu .login-btn-header { width: 100%; max-width: none; margin-top: 10px; }
+    .nav-menu .avatar { margin-top: 10px; }
     .nav-menu.active {
         opacity: 1;
         visibility: visible;
