@@ -2729,3 +2729,46 @@ body {
         height: 200px;
     }
 }
+@media (max-width: 768px) {
+    /* ADDITIONAL PROFILE SCREEN FIXES */
+    .profile-container {
+        flex-direction: column;
+    }
+    .profile-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 20px;
+    }
+    .profile-menu {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 10px;
+        padding-bottom: 10px;
+    }
+    .profile-menu .tab-item {
+        white-space: nowrap;
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    .profile-content {
+        padding: 20px 15px;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+    .history-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .history-table {
+        min-width: 600px;
+    }
+    .profile-sidebar-top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
