@@ -2539,7 +2539,7 @@ body {
 
     /* 2. HERO & BOOKING BAR */
     .hero-banner {
-        padding-top: 120px;
+        /* Removed padding-top so content can center vertically properly */
     }
     .hero-banner h1 {
         font-size: 40px;
@@ -2757,7 +2757,7 @@ body {
 
 @media (max-width: 768px) {
     body, html { overflow-x: hidden; }
-    .hero-stats { flex-wrap: wrap; padding: 10px; position: relative; }
+    .hero-stats { flex-wrap: wrap; padding: 10px; position: absolute; bottom: 50px; left: 0; right: 0; }
     .hero-stat { flex: 1 1 45%; margin-bottom: 10px; }
     .hero-stat-divider { display: none; }
     
